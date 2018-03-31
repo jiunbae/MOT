@@ -1,5 +1,4 @@
 import os
-import re
 
 from PIL import Image
 import numpy as np
@@ -15,20 +14,7 @@ from lib.generator import gen_samples
 from lib.generator import SampleGenerator
 from lib.utils import RegionExtractor
 from lib.utils import BBRegressor
-from lib.utils import AUC
-
-def load_data(data):
-    def check_extension(file):
-        return file.lower().endswith(('.png', '.jpg', '.jpeg'))
-    def parse(line):
-        return list(map(int, re.split(';|,| |\t', line.replace('\n', ''))))
-
-    with open(os.path.join(data, 'groundtruth_rect.txt')) as f:
-        truths = list(map(parse, f.readlines()))
-
-    images = list(map(lambda x: os.path.join(data, 'img', x), filter(check_extension, sorted(os.listdir(os.path.join(data, 'img'))))))
-
-    return images, truths
+from scripts.parser import parse
 
 def forward_samples(model, image, samples, out_layer='conv3'):
     model.eval()
@@ -40,7 +26,6 @@ def forward_samples(model, image, samples, out_layer='conv3'):
         feat = model(regions, out_layer=out_layer)
         feats = feat.data.clone() if i == 0 else torch.cat((feats,feat.data.clone()),0)
     return feats
-
 
 def set_optimizer(model, lr_base, lr_mult=options['lr_mult'], momentum=options['momentum'], w_decay=options['w_decay']):
     params = model.get_learnable_params()
@@ -114,11 +99,11 @@ def train(model, criterion, optimizer, pos_feats, neg_feats, maxiter, in_layer='
         torch.nn.utils.clip_grad_norm(model.parameters(), options['grad_clip'])
         optimizer.step()
 
-def run_mdnet(images, init):
+def run_mdnet(images, init, length):
     # Init bbox
     target_bbox = np.array(init)
-    result = np.zeros((len(images),4))
-    result_bb = np.zeros((len(images),4))
+    result = np.zeros((length, 4))
+    result_bb = np.zeros((length, 4))
     result[0] = target_bbox
     result_bb[0] = target_bbox
 
@@ -134,7 +119,7 @@ def run_mdnet(images, init):
     update_optimizer = set_optimizer(model, options['lr_update'])
 
     # Load first image
-    image = Image.open(images[0]).convert('RGB')
+    image = images[0]
 
     # Train bbox regressor
     bbreg_examples = gen_samples(SampleGenerator('uniform', image.size, 0.3, 1.5, 1.1),
@@ -172,10 +157,7 @@ def run_mdnet(images, init):
     neg_feats_all = [neg_feats[:options['n_neg_update']]]
     
     # Main loop
-    for i in range(1, len(images)):
-
-        # Load image
-        image = Image.open(images[i]).convert('RGB')
+    for i, image in enumerate(images[1:], 1):
 
         # Estimate target bbox
         samples = gen_samples(sample_generator, target_bbox, options['n_samples'])
@@ -244,32 +226,19 @@ def run_mdnet(images, init):
     return result, result_bb
 
 if __name__ == '__main__':
-    dataset = [
-        'Basketball',
-        'Bird1',
-        'Bolt',
-        'Car1',
-        'Diving',
-        'Football',
-        'Ironman',
-        'Matrix',
-        'Soccer',
-        'Surfer'
-    ]
-
     np.random.seed(options['seed'])
     torch.manual_seed(options['seed'])
     torch.cuda.manual_seed_all(options['seed'])
-    total = 0
-    for data in dataset:
-        path = './train/{}'.format(data)
-        images, truths = load_data(path)
-        results, result_bb = run_mdnet(images, truths[0])
-        x = np.arange(0.001, 1.001, 0.001)
-        auc = AUC(results, truths, x)
-        print ('AUC of {}'.format(path), sum(auc) / len(x))
-        total += sum(auc) / len(x)
-        with open(os.path.join(path, 'bounding_rect.txt'), 'w') as f:
-            for result in results:
-                f.write('{}\n'.format(','.join(map(str, result))))
-    print ('AUC of all {}'.format(total / len(dataset)))
+
+    f = parse('../../Downloads/MOT17/train/MOT17-02-DPM/')
+
+    images = list(f['images'])
+
+    for obj, values in f['objects'].items():
+        results, result_bb = run_mdnet([images[i - 1] for i in sorted(values.keys())], values[1][:4], len(values))
+
+    results, result_bb = run_mdnet(f['images'], f['truths'], f['length'])
+
+    with open(os.path.join(path, 'bounding_rect.txt'), 'w') as f:
+        for result in results:
+            f.write('{}\n'.format(','.join(map(str, result))))
