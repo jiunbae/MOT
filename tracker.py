@@ -234,10 +234,17 @@ if __name__ == '__main__':
 
     images = list(f['images'])
 
+    result = dict()
     for obj, values in f['objects'].items():
-        results, result_bb = run_mdnet([images[i - 1] for i in sorted(values.keys())], values[1][:4], len(values))
+        results, result_bb = run_mdnet([images[i - 1] for i in sorted(values.keys())], values[sorted(values.keys())[0]][:4], len(values))
+        result[obj] = result_bb
 
-    results, result_bb = run_mdnet(f['images'], f['truths'], f['length'])
+    import pickle
+
+    with open('r.p', 'wb') as f:
+        pickle.dump(result, f)
+
+    # results, result_bb = run_mdnet(f['images'], f['truths'], f['length'])
 
     with open(os.path.join(path, 'bounding_rect.txt'), 'w') as f:
         for result in results:
