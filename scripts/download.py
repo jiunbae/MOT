@@ -7,7 +7,6 @@ from os import remove
 from bs4 import BeautifulSoup as bs
 
 
-
 def main(des, prefix='http://cvlab.hanyang.ac.kr/tracker_benchmark/'):
     def targets(url):
         response = request.urlopen(url)
