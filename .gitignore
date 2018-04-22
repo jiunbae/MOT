@@ -4,3 +4,7 @@
 # caches
 __pycache__/
 .pyc*
+
+#data
+data/
+
