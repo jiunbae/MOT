@@ -14,7 +14,8 @@ from lib.generator import gen_samples
 from lib.generator import SampleGenerator
 from lib.utils import RegionExtractor
 from lib.utils import BBRegressor
-from scripts.parser import parse
+
+from lib.parser import parse
 
 def forward_samples(model, image, samples, out_layer='conv3'):
     model.eval()
@@ -225,12 +226,12 @@ def run_mdnet(images, init, length):
 
     return result, result_bb
 
-if __name__ == '__main__':
+def main(data_path,):
     np.random.seed(options['seed'])
     torch.manual_seed(options['seed'])
     torch.cuda.manual_seed_all(options['seed'])
 
-    f = parse('../../Downloads/MOT17/train/MOT17-02-DPM/')
+    f = parse(data_path)
 
     images = list(f['images'])
 
@@ -249,3 +250,12 @@ if __name__ == '__main__':
     with open(os.path.join(path, 'bounding_rect.txt'), 'w') as f:
         for result in results:
             f.write('{}\n'.format(','.join(map(str, result))))
+
+import argparse
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--path", help="train data path", dest='data_path', type=str, default='../train')
+    args = parser.parse_args()
+
+    main(args.data_path)
+
