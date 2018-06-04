@@ -32,7 +32,6 @@ def gen_samples(generator, bbox, n, overlap_range=None, scale_range=None):
         
         return samples
 
-
 class SampleGenerator():
     def __init__(self, type, img_size, trans_f=1, scale_f=1, aspect_f=None, valid=False):
         self.type = type
