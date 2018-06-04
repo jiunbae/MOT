@@ -39,5 +39,6 @@ def parse(directory):
         'length': int(seq['seqLength']),
         'truths': sequence,
         'objects': objects,
+        'imagesDir': seq['imDir'],
         'images': configimages(path.join(directory, seq['imDir']), seq['imExt'])
     }

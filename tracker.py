@@ -104,6 +104,7 @@ def train(model, criterion, optimizer, pos_feats, neg_feats, maxiter, in_layer='
 def run_mdnet(images, init, length):
     # Init bbox
     target_bbox = np.array(init)
+    kalman_bbox = [0, 0]
     result = np.zeros((length, 4))
     result_bb = np.zeros((length, 4))
     result[0] = target_bbox
@@ -125,7 +126,7 @@ def run_mdnet(images, init, length):
     image = images[0]
 
     # Train bbox regressor
-    kalman.update(target_bbox)
+    kalman.update(target_bbox[:2])
     bbreg_examples = gen_samples(SampleGenerator('uniform', image.size, 0.3, 1.5, 1.1),
                                  target_bbox, options['n_bbreg'], options['overlap_bbreg'], options['scale_bbreg'])
     bbreg_feats = forward_samples(model, image, bbreg_examples)
@@ -164,15 +165,15 @@ def run_mdnet(images, init, length):
     for i, image in enumerate(images[1:], 1):
 
         # Estimate target bbox
-        kalman.update(target_bbox)
+        kalman.update(target_bbox[:2])
         samples = gen_samples(sample_generator, target_bbox, options['n_samples'])
         sample_scores = forward_samples(model, image, samples, out_layer='fc6')
         top_scores, top_idx = sample_scores[:,1].topk(5)
         top_idx = top_idx.cpu().numpy()
         target_score = top_scores.mean()
-        # target_bbox = samples[top_idx].mean(axis=0)
-        target_bbox = kalman.predict().reshape(2,)
-
+        kalman_bbox = kalman.predict().reshape(2,)
+        target_bbox = samples[top_idx].mean(axis=0)
+        target_bbox[:2] = kalman_bbox
 
         success = target_score > options['success_thr']
         
@@ -190,7 +191,7 @@ def run_mdnet(images, init, length):
         
         # Copy previous result at failure
         if not success:
-            # target_bbox = result[i-1]
+            target_bbox = result[i-1]
             bbreg_bbox = result_bb[i-1]
         
         # Save result
@@ -241,6 +242,7 @@ def main(data_path,):
 
     images = list(f['images'])
 
+    print ('load images success!')
     result = dict()
     for obj, values in f['objects'].items():
         results, result_bb = run_mdnet([images[i - 1] for i in sorted(values.keys())], values[sorted(values.keys())[0]][:4], len(values))
