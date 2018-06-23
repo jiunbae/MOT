@@ -126,7 +126,7 @@ def run_mdnet(images, init, length):
     image = images[0]
 
     # Train bbox regressor
-    kalman.update(target_bbox[:2])
+    kalman.update(target_bbox[:2], offset=True)
     bbreg_examples = gen_samples(SampleGenerator('uniform', image.size, 0.3, 1.5, 1.1),
                                  target_bbox, options['n_bbreg'], options['overlap_bbreg'], options['scale_bbreg'])
     bbreg_feats = forward_samples(model, image, bbreg_examples)
