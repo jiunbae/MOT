@@ -36,7 +36,10 @@ def main(input_dir, output_dir, ratio):
 
     # resize image
     pool = mp.Pool(mp.cpu_count())
-    r = pool.map_async(partial(task, to=path.join(output_dir, imDir), size=size), glob(path.join(input_dir, imDir, '*'+imExt)))
+    r = pool.map_async(partial(task,
+                               to=path.join(output_dir, imDir),
+                               size=size.astype(np.int)),
+                       glob(path.join(input_dir, imDir, '*'+imExt)))
     pool.close()
     pool.join()
     r.get()
