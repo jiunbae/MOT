@@ -4,6 +4,7 @@ class Kalman:
     def __init__(self, state_dim: int = 6, obs_dim: int = 2):
         self.state_dim      = state_dim
         self.obs_dim        = obs_dim
+        self._offset        = np.zeros((obs_dim))
         
         self.noise          = np.matrix(np.eye(state_dim)*1e-4)
         self.observation    = np.matrix(np.eye(obs_dim)*0.01)
@@ -21,8 +22,18 @@ class Kalman:
             self.transition[np.ix_(idx,idx+obs_dim)]            += np.eye(obs_dim)
             self.transition[np.ix_(idx,idx+obs_dim*2)]          += 0.5 * np.eye(obs_dim)
             self.transition[np.ix_(idx+obs_dim,idx+obs_dim*2)]  += np.eye(obs_dim)
-            
-    def update(self, pos: np.ndarray):
+    
+    @property
+    def offset(self):
+        return self._offset
+
+    @offset.setter
+    def offset(self, value: np.ndarray):
+        self._offset = np.array([value]).T
+
+    def update(self, pos: np.ndarray, offset=False):
+        if offset: self.offset = pos
+        pos -= np.squeeze(self.offset)
         if pos.ndim == 1: pos = np.matrix(pos).T
         
         # make prediction
@@ -37,4 +48,4 @@ class Kalman:
         self.covariance = self.covariance - self.gain * self.measurement * self.covariance
 
     def predict(self) -> np.ndarray:
-        return np.asarray(self.measurement * self.state)
+        return np.asarray(self.measurement * self.state) + self.offset
