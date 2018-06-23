@@ -41,6 +41,12 @@ def main(input_dir, output_dir, ratio):
     pool.join()
     r.get()
 
+    config.set('Sequence', 'imWidth', str(int(size[0])))
+    config.set('Sequence', 'imHeight', str(int(size[1])))
+
+    with open(path.join(output_dir, 'seqinfo.ini'), 'w') as configfile:
+        config.write(configfile)
+
 if __name__ == '__main__':
     # argument parser
     parser = argparse.ArgumentParser()
