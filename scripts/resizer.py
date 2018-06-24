@@ -31,7 +31,7 @@ def main(input_dir, output_dir, ratio):
 
     # resize gt
     df = pd.read_csv(path.join(input_dir, 'gt', 'gt.txt'), header=None)
-    df.values[:, 2:6] *= ratio
+    df.loc[:, 2:6] *= ratio
     df.to_csv(path.join(output_dir, 'gt', 'gt.txt'), header=None, index=None)
 
     # resize image
