@@ -126,7 +126,7 @@ def run_mdnet(images, init, length):
     image = images[0]
 
     # Train bbox regressor
-    kalman.update(target_bbox[:2], offset=True)
+    kalman.offset = target_bbox[:2]
     bbreg_examples = gen_samples(SampleGenerator('uniform', image.size, 0.3, 1.5, 1.1),
                                  target_bbox, options['n_bbreg'], options['overlap_bbreg'], options['scale_bbreg'])
     bbreg_feats = forward_samples(model, image, bbreg_examples)
@@ -165,15 +165,16 @@ def run_mdnet(images, init, length):
     for i, image in enumerate(images[1:], 1):
 
         # Estimate target bbox
-        kalman.update(target_bbox[:2])
+        pred = kalman.predict().reshape(2, )
+        target_bbox[:2] = pred
+
         samples = gen_samples(sample_generator, target_bbox, options['n_samples'])
         sample_scores = forward_samples(model, image, samples, out_layer='fc6')
         top_scores, top_idx = sample_scores[:,1].topk(5)
         top_idx = top_idx.cpu().numpy()
         target_score = top_scores.mean()
-        kalman_bbox = kalman.predict().reshape(2,)
         target_bbox = samples[top_idx].mean(axis=0)
-        target_bbox[:2] = kalman_bbox
+        kalman.update(target_bbox[:2])
 
         success = target_score > options['success_thr']
         
@@ -243,17 +244,13 @@ def main(data_path,):
     images = list(f['images'])
 
     print ('load images success!')
+    import pickle
     result = dict()
     for obj, values in f['objects'].items():
         results, result_bb = run_mdnet([images[i - 1] for i in sorted(values.keys())], values[sorted(values.keys())[0]][:4], len(values))
         result[obj] = result_bb
-
-    import pickle
-
-    with open('r.p', 'wb') as f:
-        pickle.dump(result, f)
-
-    # results, result_bb = run_mdnet(f['images'], f['truths'], f['length'])
+        with open('r_{}.p'.format(obj), 'wb') as f:
+            pickle.dump(result_bb, f)
 
     with open(os.path.join(path, 'bounding_rect.txt'), 'w') as f:
         for result in results:
