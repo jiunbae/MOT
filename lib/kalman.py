@@ -31,9 +31,8 @@ class Kalman:
     def offset(self, value: np.ndarray):
         self._offset = np.array([value]).T
 
-    def update(self, pos: np.ndarray, offset=False):
-        if offset: self.offset = pos
-        pos -= np.squeeze(self.offset)
+    def update(self, value: np.ndarray):
+        pos = value - np.squeeze(self.offset)
         if pos.ndim == 1: pos = np.matrix(pos).T
         
         # make prediction
