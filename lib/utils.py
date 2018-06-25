@@ -13,6 +13,14 @@ performance = lambda tar, obj, rat: [sum([overlap(t, o, r) for t, o in zip(tar, 
 perframe = lambda tar, obj: [sum([overlap(t, o, r) for r in x]) / len(x) for t, o in zip(tar, obj)]
 scale = lambda box, ratio=0.01: [box[0] - box[2] * ratio, box[1] - box[3] * ratio, box[2] + box[2] * ratio * 2, box[3] + box[3] * ratio * 2]
 
+def calibration(bbox, size=(960, 540)):
+    l, t, w, h, *o = bbox
+    l = np.min(l, 0)
+    t = np.min(t, 0)
+    if l + w > size[0]: l = size[0] - w
+    if t + h > size[1]: t = size[1] - h
+    return np.concatenate([np.array([l, t, w, h]), np.array(o)], axis=0)
+
 def AUC(results, truths, x = np.arange(0.001, 1.001, 0.001)):
     return performance(results, truths, x)
 

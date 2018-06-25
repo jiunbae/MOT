@@ -14,6 +14,7 @@ from lib.generator import gen_samples
 from lib.generator import SampleGenerator
 from lib.utils import RegionExtractor
 from lib.utils import BBRegressor
+from lib.utils import calibration
 from lib.kalman import Kalman
 
 from lib.parser import parse
@@ -103,7 +104,7 @@ def train(model, criterion, optimizer, pos_feats, neg_feats, maxiter, in_layer='
 
 def run_mdnet(images, init, length):
     # Init bbox
-    target_bbox = np.array(init)
+    target_bbox = calibration(np.array(init))
     kalman_bbox = [0, 0]
     result = np.zeros((length, 4))
     result_bb = np.zeros((length, 4))
@@ -131,6 +132,7 @@ def run_mdnet(images, init, length):
                                  target_bbox, options['n_bbreg'], options['overlap_bbreg'], options['scale_bbreg'])
     bbreg_feats = forward_samples(model, image, bbreg_examples)
     bbreg = BBRegressor(image.size)
+    print (bbreg_feats.shape, bbreg_examples.shape, target_bbox)
     bbreg.train(bbreg_feats, bbreg_examples, target_bbox)
 
     # Draw pos/neg samples
@@ -165,8 +167,8 @@ def run_mdnet(images, init, length):
     for i, image in enumerate(images[1:], 1):
 
         # Estimate target bbox
-        pred = kalman.predict().reshape(2, )
-        target_bbox[:2] = pred
+        target_bbox[:2] = kalman.predict().reshape(2, )
+        target_bbox = calibration(target_bbox)
 
         samples = gen_samples(sample_generator, target_bbox, options['n_samples'])
         sample_scores = forward_samples(model, image, samples, out_layer='fc6')
@@ -247,6 +249,7 @@ def main(data_path,):
     import pickle
     result = dict()
     for obj, values in f['objects'].items():
+        if obj < 16: continue
         results, result_bb = run_mdnet([images[i - 1] for i in sorted(values.keys())], values[sorted(values.keys())[0]][:4], len(values))
         result[obj] = result_bb
         with open('r_{}.p'.format(obj), 'wb') as f:
