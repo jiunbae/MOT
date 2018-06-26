@@ -248,7 +248,7 @@ def main(data_path,):
     import pickle
     result = dict()
     for obj, values in f['objects'].items():
-        if obj < 63: continue
+        # if obj < 63: continue
         print (obj)
         results, result_bb = run_mdnet([images[i - 1] for i in sorted(values.keys())], values[sorted(values.keys())[0]][:4], len(values))
         result[obj] = result_bb
