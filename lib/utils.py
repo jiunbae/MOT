@@ -15,10 +15,12 @@ scale = lambda box, ratio=0.01: [box[0] - box[2] * ratio, box[1] - box[3] * rati
 
 def calibration(bbox, size=(960, 540)):
     l, t, w, h, *o = bbox
-    l = np.min(l, 0)
-    t = np.min(t, 0)
+    l = np.maximum(l, 0)
+    t = np.maximum(t, 0)
     if l + w > size[0]: l = size[0] - w
     if t + h > size[1]: t = size[1] - h
+    w = np.maximum(w, 10)
+    h = np.maximum(h, 10)
     return np.concatenate([np.array([l, t, w, h]), np.array(o)], axis=0)
 
 def AUC(results, truths, x = np.arange(0.001, 1.001, 0.001)):
