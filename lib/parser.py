@@ -23,7 +23,7 @@ def configimages(images, ext='.jpg'):
     def resize(img, r):
         w, h = img.size
         return img.resize((int(w/r), int(h/r)))
-    for img in listdir(images):
+    for img in sorted(listdir(images)):
         if img.endswith(ext):
             yield Image.open(path.join(images, img)).convert('RGB')
 

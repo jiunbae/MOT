@@ -132,7 +132,6 @@ def run_mdnet(images, init, length):
                                  target_bbox, options['n_bbreg'], options['overlap_bbreg'], options['scale_bbreg'])
     bbreg_feats = forward_samples(model, image, bbreg_examples)
     bbreg = BBRegressor(image.size)
-    print (bbreg_feats.shape, bbreg_examples.shape, target_bbox)
     bbreg.train(bbreg_feats, bbreg_examples, target_bbox)
 
     # Draw pos/neg samples
@@ -249,15 +248,12 @@ def main(data_path,):
     import pickle
     result = dict()
     for obj, values in f['objects'].items():
-        if obj < 16: continue
+        if obj < 63: continue
+        print (obj)
         results, result_bb = run_mdnet([images[i - 1] for i in sorted(values.keys())], values[sorted(values.keys())[0]][:4], len(values))
         result[obj] = result_bb
         with open('r_{}.p'.format(obj), 'wb') as f:
             pickle.dump(result_bb, f)
-
-    with open(os.path.join(path, 'bounding_rect.txt'), 'w') as f:
-        for result in results:
-            f.write('{}\n'.format(','.join(map(str, result))))
 
 import argparse
 if __name__ == '__main__':
