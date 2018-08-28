@@ -23,7 +23,6 @@ def append_params(params, module, prefix):
             else:
                 raise RuntimeError("Duplicated param name: %s" % (name))
 
-
 class LRN(nn.Module):
     def __init__(self):
         super(LRN, self).__init__()
