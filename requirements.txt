@@ -1,5 +1,11 @@
-numpy>=1.13.1
+numpy
+h5py
+Cython
+scipy
 torch>=0.3.1
-Pillow>=5.0.0
-scipy>=0.19.1
-scikit-learn>=0.18.2
+opencv-python
+cffi
+sklearn
+numba
+torchvision
+fire
