@@ -1,4 +1,5 @@
 from os import path
+import argparse
 
 from tracker.mot_tracker import OnlineTracker
 from datasets.mot_seq import get_loader
@@ -21,4 +22,9 @@ def main(data_root, seqs):
                 f.write(','.join(map(str, [fid, tid, *tlwh]))+',1,-1,-1,-1\n')
 
 if __name__ == '__main__':
-    main(data_root = '../datasets/MOT16/train', seqs=['MOT16-02'])
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--path", help="train data path", dest='path', type=str, default='../datasets/MOT16/train')
+    parser.add_argument("--seqs", help="sequences on dataset, split by comma", dest='seqs', type=str, default='MOT16-02')
+    args = parser.parse_args()
+
+    main(data_root=args.path, seqs=args.seqs.split(','))
