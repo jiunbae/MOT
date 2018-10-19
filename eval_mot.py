@@ -14,7 +14,7 @@ def eval_seq(dataloader):
 
 def main(data_root, seqs):
     for seq in seqs:
-        with open(path.join(data_root, seq, 'result.csv', 'w')) as f:
+        with open(path.join(data_root, seq, 'result.csv'), 'w') as f:
             for fid, tid, tlwh in eval_seq(get_loader(data_root, seq)):
                 if tid < 0: continue
                 x, y, w, h = tlwh
