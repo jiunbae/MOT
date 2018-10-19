@@ -265,6 +265,7 @@ class OnlineTracker(object):
         dists = matching.nearest_reid_distance(tracked_stracks, detections, metric='euclidean')
         dists = matching.gate_cost_matrix(self.kalman_filter, dists, tracked_stracks, detections)
         matches, u_track, u_detection = matching.linear_assignment(dists, thresh=self.min_ap_dist)
+
         for itracked, idet in matches:
             tracked_stracks[itracked].update(detections[idet], self.frame_id, image)
 
