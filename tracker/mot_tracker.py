@@ -4,7 +4,6 @@ from collections import OrderedDict, deque
 import itertools
 
 from utils.nms_wrapper import nms_detections
-from utils.log import logger
 
 from tracker import matching
 from utils.kalman_filter import KalmanFilter
@@ -336,11 +335,5 @@ class OnlineTracker(object):
         output_tracked_stracks = [track for track in self.tracked_stracks if track.is_activated]
 
         output_stracks = output_tracked_stracks + out_lost_stracks
-
-        logger.debug('===========Frame {}=========='.format(self.frame_id))
-        logger.debug('Activated: {}'.format([track.track_id for track in activated_starcks]))
-        logger.debug('Refind: {}'.format([track.track_id for track in refind_stracks]))
-        logger.debug('Lost: {}'.format([track.track_id for track in lost_stracks]))
-        logger.debug('Removed: {}'.format([track.track_id for track in removed_stracks]))
 
         return output_stracks
