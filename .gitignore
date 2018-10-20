@@ -5,9 +5,6 @@
 __pycache__/
 .pyc*
 
-# data
-data/
-
 # temporary reulsts
 result*
 
