@@ -14,3 +14,9 @@ result*
 # pickle dump
 *.p
 
+# build
+build/
+*.so
+*.o
+utils/bbox.c
+
