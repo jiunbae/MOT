@@ -5,9 +5,6 @@
 __pycache__/
 .pyc*
 
-# temporary reulsts
-result*
-
 # pickle dump
 *.p
 
