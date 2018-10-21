@@ -1,4 +1,4 @@
-from os import path
+from os import path, listdir
 import argparse
 
 from pymot.pymot import MOTEvaluation
@@ -58,11 +58,19 @@ def mot(groundtruth, hypotheses):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--path", help="train data path", dest='path', type=str, default='../datasets/MOT16/train')
-    parser.add_argument("--seqs", help="sequences on dataset, split by comma", dest='seqs', type=str, default='MOT16-02')
+    parser.add_argument("--seqs", help="sequences on dataset, split by comma", dest='seqs', type=str, default='all')
     args = parser.parse_args()
 
     ds, seqs = args.path, args.seqs.split(',')
 
+    if seqs[0] == 'all':
+        seqs = listdir(ds)
+
+    motas, motps = 0, 0
     for seq in seqs:
         mota, motp = mot(*result_to_json(*load_result(path.join(ds, seq))))
-        print (seq, mota, motp)
+        print ("{}: MOTA: {}, MOTP: {}".format(seq, mota, motp))
+        motas += mota
+        motps += motp
+
+    print ("{}: MOTA: {}, MOTP: {}".format('total', motas/len(seqs), motps/len(seqs)))

@@ -6,6 +6,8 @@ class Rect:
     def __init__(self, box):
         """Constructor from dict with keys width, height, x, y, dco and id"""
         
+        box['width'] = max(box['width'], 0)
+        box['height'] = max(box['height'], 0)
         assert box["width"]  >= 0 # 0 allowed, since intersection of rects may create empty rect
         assert box["height"] >= 0 # 0 allowed, since intersection of rects may create empty rect
 
