@@ -179,7 +179,7 @@ class STrack(BaseTrack):
 
 class OnlineTracker(object):
 
-    def __init__(self, min_cls_score=0.4, min_ap_dist=0.64, max_time_lost=30, use_tracking=True, use_refind=True):
+    def __init__(self, min_cls_score=0.2, min_ap_dist=0.64, max_time_lost=120, use_tracking=True, use_refind=True):
 
         self.min_cls_score = min_cls_score
         self.min_ap_dist = min_ap_dist
@@ -233,7 +233,7 @@ class OnlineTracker(object):
             scores = scores * cls_scores
             # nms
             if len(detections) > 0:
-                keep = nms_detections(rois, scores.reshape(-1), nms_thresh=0.3)
+                keep = nms_detections(rois, scores.reshape(-1), nms_thresh=0.4)
                 mask = np.zeros(len(rois), dtype=np.bool)
                 mask[keep] = True
                 keep = np.where(mask & (scores >= self.min_cls_score))[0]
@@ -285,7 +285,7 @@ class OnlineTracker(object):
         detections = [detections[i] for i in u_detection] + pred_dets
         r_tracked_stracks = [tracked_stracks[i] for i in u_track]
         dists = matching.iou_distance(r_tracked_stracks, detections)
-        matches, u_track, u_detection = matching.linear_assignment(dists, thresh=0.7)
+        matches, u_track, u_detection = matching.linear_assignment(dists, thresh=0.8)
         for itracked, idet in matches:
             r_tracked_stracks[itracked].update(detections[idet], self.frame_id, image, update_feature=True)
         for it in u_track:
@@ -296,7 +296,7 @@ class OnlineTracker(object):
         # unconfirmed
         detections = [detections[i] for i in u_detection if i < len_det]
         dists = matching.iou_distance(unconfirmed, detections)
-        matches, u_unconfirmed, u_detection = matching.linear_assignment(dists, thresh=0.7)
+        matches, u_unconfirmed, u_detection = matching.linear_assignment(dists, thresh=0.8)
         for itracked, idet in matches:
             unconfirmed[itracked].update(detections[idet], self.frame_id, image, update_feature=True)
         for it in u_unconfirmed:
