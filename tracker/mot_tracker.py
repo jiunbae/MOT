@@ -7,6 +7,7 @@ from utils.nms_wrapper import nms_detections
 
 from tracker import matching
 from utils.kalman_filter import KalmanFilter
+from utils.iou import iou
 from models.classification.classifier import PatchClassifier
 from models.reid import load_reid_model, extract_reid_features
 
@@ -206,6 +207,9 @@ class OnlineTracker(object):
         lost_stracks = []
         removed_stracks = []
 
+        iou_tracking = []
+        iou_finished = []
+
         """step 1: prediction"""
         for strack in itertools.chain(self.tracked_stracks, self.lost_stracks):
             strack.predict()
@@ -213,7 +217,29 @@ class OnlineTracker(object):
         """step 2: scoring and selection"""
         if det_scores is None:
             det_scores = np.ones(len(tlwhs), dtype=float)
-        detections = [STrack(tlwh, score, from_det=True) for tlwh, score in zip(tlwhs, det_scores)]
+
+        dets = tlwhs[np.where(det_scores>=.0)]
+        updated_iou_track = []
+        for track in iou_tracking:
+            if len(dets) > 0:
+                best = max(dets, key=lambda x: iou(track['bboxes'][-1], x))
+                if iou(track, best) >= .3:
+                    track['bboxes'].append(best)
+                    track['score'] = max(track['score'], det_scores[np.where(tlwhs == best)])
+                    updated_iou_track.append(track)
+                    dets = np.delete(dets[np.where(dets == best)])
+            if len(updated_iou_track) == 0 or track is not updated_iou_track[-1]:
+                if track['score'] >= .65 and len(track['bboxes']) >= 3:
+                    iou_finished.append(track)
+
+        detections = []
+        new_tracks = []
+        for tlwh, score in zip(tlwhs, det_scores):
+            detections.append(STrack(tlwh, score, from_det=True))
+            new_tracks.append({'bboxes': [tlwh], 'score': score, 'start': self.frame_id})
+
+        for tracks in updated_iou_track + new_tracks:
+            detections.append(STrack(tracks['bboxes'][-1], tracks['score'], from_det=False))
 
         if self.classifier is None:
             pred_dets = []
