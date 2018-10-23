@@ -5,12 +5,12 @@
 __pycache__/
 .pyc*
 
-# data
-data/
-
-# temporary reulsts
-result*
-
 # pickle dump
 *.p
+
+# build
+build/
+*.so
+*.o
+utils/bbox.c
 
