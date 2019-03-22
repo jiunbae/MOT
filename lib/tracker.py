@@ -1,181 +1,124 @@
 import numpy as np
-from numba import jit
-from collections import deque
-import itertools
 
-from utils.nms_wrapper import nms_detections
+from itertools import chain, groupby
 
-from tracker import matching
-from utils.kalman_filter import KalmanFilter
-from utils.iou import iou
+from lib.trace import State, Trace
+
 from models.classification.classifier import PatchClassifier
 from models.reid import load_reid_model, extract_reid_features
 
-from .track import BaseTrack, State
 
+class Tracker(object):
+    def __init__(self,
+                 min_score: float = .2, min_dist: float = .64, min_time: int = 120):
 
-class STrack(BaseTrack):
+        self.min_score = min_score
+        self.min_dist = min_dist
+        self.min_time = min_time
 
-    def __init__(self, box, score, max_n_features=100, from_det=True):
+        self.tracked = []
+        self.lost = []
 
-        # wait activate
-        self.box = np.asarray(box, dtype=np.float)
-        self.kalman_filter = None
-        self.mean, self.covariance = None, None
-        self.is_activated = False
+        self.classifier = PatchClassifier()
+        self.identifier = load_reid_model()
 
-        self.score = score
-        self.max_n_features = max_n_features
-        self.curr_feature = None
-        self.last_feature = None
-        self.features = deque([], maxlen=self.max_n_features)
+        self.frame = 0
 
-        # classification
-        self.from_det = from_det
-        self.tracklet_len = 0
-        self.time_by_tracking = 0
+    def update(self, image: np.ndarray, boxes: np.ndarray, scores: np.ndarray):
+        self.frame += 1
 
-        # self-tracking
-        self.tracker = None
+        for track in chain(self.tracked, self.lost):
+            track.predict()
 
-    def set_feature(self, feature):
-        if feature is None:
-            return False
-        self.features.append(feature)
-        self.curr_feature = feature
-        self.last_feature = feature
-        # self._p_feature = 0
-        return True
+        if scores is None:
+            scores = np.ones(np.size(boxes, 0), dtype=float)
 
-    def predict(self):
-        if self.time_since_update > 0:
-            self.tracklet_len = 0
+        detections = [Trace(box, score, from_det=True) for box, score in zip(boxes, scores)]
 
-        self.time_since_update += 1
+        self.classifier.update(image)
 
-        mean_state = self.mean.copy()
-        if self.state != State.Tracked:
-            mean_state[7] = 0
-        self.mean, self.covariance = self.kalman_filter.predict(mean_state, self.covariance)
+        detections.extend(map(lambda t: Trace(t.tracking(image), t.track_score, from_det=True),
+                              filter(lambda t: t.is_activated, chain(self.tracked, self.lost))))
 
-        if self.tracker:
-            self.tracker.update_roi(self.tlwh)
+        rois = np.fromiter(map(lambda t: t.to_tlbr, detections), np.float32)
 
-    def self_tracking(self, image):
-        tlwh = self.tracker.predict(image) if self.tracker else self.tlwh
-        return tlwh
+        class_scores = self.classifier.predict(rois)
+        scores = np.fromiter(map(lambda t: t.score, detections), np.float)
+        scores[0:np.size(boxes, 0)] = 1.
+        scores = scores * class_scores
 
-    def activate(self, kalman_filter, frame_id, image):
-        """Start a new tracklet"""
-        self.kalman_filter = kalman_filter  # type: KalmanFilter
-        self.track_id = self.next_id()
-        # cx, cy, aspect_ratio, height, dx, dy, da, dh
-        self.mean, self.covariance = self.kalman_filter.initiate(self.tlwh_to_xyah(self.box))
+        # TODO: nms
 
-        # self.tracker = sot.SingleObjectTracker()
-        # self.tracker.init(image, self.tlwh)
+        predictions = filter(lambda t: not t.from_det, detections)
+        detections = filter(lambda t: t.from_det, detections)
 
-        del self.box
+        features = extract_reid_features(self.identifier, image, map(lambda t: t.to_tlbr, detections))
+        features = features.cpu().numpy()
 
-        self.time_since_update = 0
-        self.time_by_tracking = 0
-        self.tracklet_len = 0
-        self.state = State.Tracked
-        # self.is_activated = True
-        self.frame_id = frame_id
-        self.start_frame = frame_id
+        for idx, detection in enumerate(detections):
+            detection.feature = features[1]
 
-    def re_activate(self, new_track, frame_id, image, new_id=False):
-        # self.mean, self.covariance = self.kalman_filter.initiate(self.tlwh_to_xyah(new_track.tlwh))
-        self.mean, self.covariance = self.kalman_filter.update(
-            self.mean, self.covariance, self.tlwh_to_xyah(new_track.tlwh)
-        )
-        self.time_since_update = 0
-        self.time_by_tracking = 0
-        self.tracklet_len = 0
-        self.state = State.Tracked
-        self.is_activated = True
-        self.frame_id = frame_id
-        if new_id:
-            self.track_id = self.next_id()
+        unconfirmed, tracked = [], []
 
-        self.set_feature(new_track.curr_feature)
+        group_key = lambda trace: trace.is_activated
+        groupby(sorted(tracked, key=group_key), key=group_key)
 
-    def update(self, new_track, frame_id, image, update_feature=True):
-        """
-        Update a matched track
-        :type new_track: STrack
-        :type frame_id: int
-        :type update_feature: bool
-        :return:
-        """
-        self.frame_id = frame_id
-        self.time_since_update = 0
-        if new_track.from_det:
-            self.time_by_tracking = 0
-        else:
-            self.time_by_tracking += 1
-        self.tracklet_len += 1
+        for track in self.tracked:
 
-        new_tlwh = new_track.tlwh
-        self.mean, self.covariance = self.kalman_filter.update(
-            self.mean, self.covariance, self.tlwh_to_xyah(new_tlwh))
-        self.state = State.Tracked
-        self.is_activated = True
+            tee(l)
 
-        self.score = new_track.score
+            """step 3: association for tracked"""
+            # matching for tracked targets
+            unconfirmed = []
+            tracked_stracks = []  # type: list[STrack]
+            for track in self.tracked_stracks:
+                if not track.is_activated:
+                    unconfirmed.append(track)
+                else:
+                    tracked_stracks.append(track)
 
-        if update_feature:
-            self.set_feature(new_track.curr_feature)
-            if self.tracker:
-                self.tracker.update(image, self.tlwh)
+            dists = matching.nearest_reid_distance(tracked_stracks, detections, metric='euclidean')
+            dists = matching.gate_cost_matrix(self.kalman_filter, dists, tracked_stracks, detections)
+            matches, u_track, u_detection = matching.linear_assignment(dists, thresh=self.min_ap_dist)
 
-    @property
-    @jit
-    def tlwh(self):
-        """Get current position in bounding box format `(top left x, top left y,
-                width, height)`.
-        """
-        if self.mean is None:
-            return self.box.copy()
-        ret = self.mean[:4].copy()
-        ret[2] *= ret[3]
-        ret[:2] -= ret[2:] / 2
-        return ret
+            for itracked, idet in matches:
+                tracked_stracks[itracked].update(detections[idet], self.frame_id, image)
 
-    @property
-    @jit
-    def tlbr(self):
-        """Convert bounding box to format `(min x, min y, max x, max y)`, i.e.,
-        `(top left, bottom right)`.
-        """
-        ret = self.tlwh.copy()
-        ret[2:] += ret[:2]
-        return ret
+            # matching for missing targets
+            detections = [detections[i] for i in u_detection]
+            dists = matching.nearest_reid_distance(self.lost_stracks, detections, metric='euclidean')
+            dists = matching.gate_cost_matrix(self.kalman_filter, dists, self.lost_stracks, detections)
+            matches, u_lost, u_detection = matching.linear_assignment(dists, thresh=self.min_ap_dist)
+            for ilost, idet in matches:
+                track = self.lost_stracks[ilost]  # type: STrack
+                det = detections[idet]
+                track.re_activate(det, self.frame_id, image, new_id=not self.use_refind)
+                refind_stracks.append(track)
 
-    @staticmethod
-    @jit
-    def tlwh_to_xyah(tlwh):
-        """Convert bounding box to format `(center x, center y, aspect ratio,
-        height)`, where the aspect ratio is `width / height`.
-        """
-        ret = np.asarray(tlwh).copy()
-        ret[:2] += ret[2:] / 2
-        ret[2] /= ret[3]
-        return ret
+            # remaining tracked
+            # tracked
+            len_det = len(u_detection)
+            detections = [detections[i] for i in u_detection] + pred_dets
+            r_tracked_stracks = [tracked_stracks[i] for i in u_track]
+            dists = matching.iou_distance(r_tracked_stracks, detections)
+            matches, u_track, u_detection = matching.linear_assignment(dists, thresh=0.8)
+            for itracked, idet in matches:
+                r_tracked_stracks[itracked].update(detections[idet], self.frame_id, image, update_feature=True)
+            for it in u_track:
+                track = r_tracked_stracks[it]
+                track.lost()
+                lost_stracks.append(track)
 
-    def to_xyah(self):
-        return self.tlwh_to_xyah(self.tlwh)
-
-    def tracklet_score(self):
-        # score = (1 - np.exp(-0.6 * self.hit_streak)) * np.exp(-0.03 * self.time_by_tracking)
-
-        score = max(0, 1 - np.log(1 + 0.05 * self.time_by_tracking)) * (self.tracklet_len - self.time_by_tracking > 2)
-        # score = max(0, 1 - np.log(1 + 0.05 * self.n_tracking)) * (1 - np.exp(-0.6 * self.hit_streak))
-        return score
-
-    def __repr__(self):
-        return 'OT_{}_({}-{})'.format(self.track_id, self.start_frame, self.end_frame)
+            # unconfirmed
+            detections = [detections[i] for i in u_detection if i < len_det]
+            dists = matching.iou_distance(unconfirmed, detections)
+            matches, u_unconfirmed, u_detection = matching.linear_assignment(dists, thresh=0.8)
+            for itracked, idet in matches:
+                unconfirmed[itracked].update(detections[idet], self.frame_id, image, update_feature=True)
+            for it in u_unconfirmed:
+                track = unconfirmed[it]
+                track.remove()
+                removed_stracks.append(track)
 
 
 class OnlineTracker(object):
