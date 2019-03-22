@@ -1,6 +1,6 @@
 import numpy as np
 from numba import jit
-from collections import OrderedDict, deque
+from collections import deque
 import itertools
 
 from utils.nms_wrapper import nms_detections
@@ -11,15 +11,15 @@ from utils.iou import iou
 from models.classification.classifier import PatchClassifier
 from models.reid import load_reid_model, extract_reid_features
 
-from .basetrack import BaseTrack, TrackState
+from .track import BaseTrack, State
 
 
 class STrack(BaseTrack):
 
-    def __init__(self, tlwh, score, max_n_features=100, from_det=True):
+    def __init__(self, box, score, max_n_features=100, from_det=True):
 
         # wait activate
-        self._tlwh = np.asarray(tlwh, dtype=np.float)
+        self._tlwh = np.asarray(box, dtype=np.float)
         self.kalman_filter = None
         self.mean, self.covariance = None, None
         self.is_activated = False
@@ -54,7 +54,7 @@ class STrack(BaseTrack):
         self.time_since_update += 1
 
         mean_state = self.mean.copy()
-        if self.state != TrackState.Tracked:
+        if self.state != State.Tracked:
             mean_state[7] = 0
         self.mean, self.covariance = self.kalman_filter.predict(mean_state, self.covariance)
 
@@ -80,7 +80,7 @@ class STrack(BaseTrack):
         self.time_since_update = 0
         self.time_by_tracking = 0
         self.tracklet_len = 0
-        self.state = TrackState.Tracked
+        self.state = State.Tracked
         # self.is_activated = True
         self.frame_id = frame_id
         self.start_frame = frame_id
@@ -93,7 +93,7 @@ class STrack(BaseTrack):
         self.time_since_update = 0
         self.time_by_tracking = 0
         self.tracklet_len = 0
-        self.state = TrackState.Tracked
+        self.state = State.Tracked
         self.is_activated = True
         self.frame_id = frame_id
         if new_id:
@@ -120,7 +120,7 @@ class STrack(BaseTrack):
         new_tlwh = new_track.tlwh
         self.mean, self.covariance = self.kalman_filter.update(
             self.mean, self.covariance, self.tlwh_to_xyah(new_tlwh))
-        self.state = TrackState.Tracked
+        self.state = State.Tracked
         self.is_activated = True
 
         self.score = new_track.score
@@ -316,7 +316,7 @@ class OnlineTracker(object):
             r_tracked_stracks[itracked].update(detections[idet], self.frame_id, image, update_feature=True)
         for it in u_track:
             track = r_tracked_stracks[it]
-            track.mark_lost()
+            track.lost()
             lost_stracks.append(track)
 
         # unconfirmed
@@ -327,7 +327,7 @@ class OnlineTracker(object):
             unconfirmed[itracked].update(detections[idet], self.frame_id, image, update_feature=True)
         for it in u_unconfirmed:
             track = unconfirmed[it]
-            track.mark_removed()
+            track.remove()
             removed_stracks.append(track)
 
         """step 4: init new stracks"""
@@ -341,11 +341,11 @@ class OnlineTracker(object):
         """step 6: update state"""
         for track in self.lost_stracks:
             if self.frame_id - track.end_frame > self.max_time_lost:
-                track.mark_removed()
+                track.remove()
                 removed_stracks.append(track)
 
-        self.tracked_stracks = [t for t in self.tracked_stracks if t.state == TrackState.Tracked]
-        self.lost_stracks = [t for t in self.lost_stracks if t.state == TrackState.Lost]  # type: list[STrack]
+        self.tracked_stracks = [t for t in self.tracked_stracks if t.state == State.Tracked]
+        self.lost_stracks = [t for t in self.lost_stracks if t.state == State.Lost]  # type: list[STrack]
         self.tracked_stracks.extend(activated_starcks)
         self.tracked_stracks.extend(refind_stracks)
         self.lost_stracks.extend(lost_stracks)
