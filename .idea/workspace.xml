@@ -2,19 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="85a95566-2f6e-47ef-a662-f7dd79db4811" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/bbox_setup.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/psroi_pooling/build.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/psroi_pooling/build.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/psroi_pooling/make.sh" beforeDir="false" afterPath="$PROJECT_DIR$/models/psroi_pooling/make.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tracker/matching.py" beforeDir="false" afterPath="$PROJECT_DIR$/tracker/matching.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/bbox.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/bbox.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/nms/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/nms/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/nms/cpu_nms.pyx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/nms/gpu_nms.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/nms/gpu_nms.pyx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/nms/nms_kernel.cu" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/nms/py_cpu_nms.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/nms_wrapper.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -44,32 +32,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/eval.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="304">
-              <caret line="19" selection-start-line="19" selection-end-line="19" />
-              <folding>
-                <element signature="e#0#28#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pymot/pymot.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="95">
-              <caret line="5" selection-start-line="5" selection-end-line="5" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/eval_mot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="171">
-              <caret line="9" column="43" selection-start-line="9" selection-start-column="43" selection-end-line="9" selection-end-column="43" />
+            <state relative-caret-position="418">
+              <caret line="22" column="84" lean-forward="true" selection-start-line="22" selection-start-column="84" selection-end-line="22" selection-end-column="84" />
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
               </folding>
@@ -93,23 +60,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="MOT" type="b2602c69:ProjectViewProjectNode" />
-              <item name="MOT" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="MOT" type="b2602c69:ProjectViewProjectNode" />
-              <item name="MOT" type="462c0819:PsiDirectoryNode" />
-              <item name="utils" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
       <pane id="Scope" />
+      <pane id="ProjectPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -119,7 +71,7 @@
     <property name="WebServerToolWindowPanel.toolwindow.show.date" value="false" />
     <property name="WebServerToolWindowPanel.toolwindow.show.permissions" value="false" />
     <property name="WebServerToolWindowPanel.toolwindow.show.size" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/eval_mot.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
   </component>
   <component name="RunDashboard">
@@ -171,18 +123,18 @@
       <workItem from="1550423559309" duration="1312000" />
       <workItem from="1553325146206" duration="24000" />
       <workItem from="1553325241361" duration="599000" />
+      <workItem from="1553354104812" duration="26000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1935000" />
+    <option name="totallyTimeSpent" value="1961000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="2062" height="1126" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4957265" visible="true" weight="0.09140859" />
-      <window_info id="Structure" order="1" sideWeight="0.50427353" side_tool="true" visible="true" weight="0.09140859" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.494302" visible="true" weight="0.09240759" />
+      <window_info id="Structure" order="1" sideWeight="0.505698" side_tool="true" visible="true" weight="0.09240759" />
       <window_info anchor="bottom" id="Docker" order="0" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="1" />
       <window_info anchor="bottom" id="Version Control" order="2" sideWeight="0.4995" weight="0.21291624" />
@@ -209,27 +161,12 @@
     <option name="version" value="1" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/eval.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="304">
-          <caret line="19" selection-start-line="19" selection-end-line="19" />
-          <folding>
-            <element signature="e#0#28#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pymot/pymot.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="95">
-          <caret line="5" selection-start-line="5" selection-end-line="5" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/eval.py" />
+    <entry file="file://$PROJECT_DIR$/pymot/pymot.py" />
     <entry file="file://$PROJECT_DIR$/eval_mot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="171">
-          <caret line="9" column="43" selection-start-line="9" selection-start-column="43" selection-end-line="9" selection-end-column="43" />
+        <state relative-caret-position="418">
+          <caret line="22" column="84" lean-forward="true" selection-start-line="22" selection-start-column="84" selection-end-line="22" selection-end-column="84" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
           </folding>
