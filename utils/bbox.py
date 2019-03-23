@@ -2,6 +2,22 @@ import numpy as np
 import cv2
 
 
+def bbox_ious(boxes, qboxes):
+    N, K = boxes.shape[0], qboxes.shape[0]
+    intersec = np.zeros((N, K))
+    for k in range(K):
+        qbox_area = (qboxes[k,2]-qboxes[k,0]+1)*(qboxes[k,3]-qboxes[k,1]+1)
+        for n in range(N):
+            iw = min(boxes[n,2],qboxes[k,2])-max(boxes[n,0],qboxes[k,0])+1
+            if iw>0:
+                ih = min(boxes[n,3],qboxes[k,3])-max(boxes[n,1],qboxes[k,1])+1
+                if ih>0:
+                    box_area = (boxes[n,2]-boxes[n,0]+1)*(boxes[n,3]-boxes[n,1]+1)
+                    inter_area = iw * ih
+                    intersec[n, k] = inter_area/(qbox_area+box_area-inter_area)
+    return intersec
+
+
 def clip_boxes(boxes, im_shape):
     """
     Clip boxes to image boundaries.

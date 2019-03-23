@@ -3,7 +3,7 @@ import numpy as np
 from scipy.spatial.distance import cdist
 from sklearn.utils import linear_assignment_
 
-from utils.cython_bbox import bbox_ious
+from utils.bbox import bbox_ious
 from utils import kalman_filter
 from utils import visualization
 
