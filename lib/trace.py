@@ -102,7 +102,7 @@ class Trace(object):
         )
         self.is_activated = True
 
-        self._score = trace.score
+        self.score = trace.score
 
         if update_feature:
             self.feature = trace.feature_current

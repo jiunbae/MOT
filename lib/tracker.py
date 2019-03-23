@@ -1,8 +1,14 @@
-import numpy as np
+from typing import Tuple, List
+from itertools import chain, compress
 
-from itertools import chain, groupby
+import numpy as np
+from scipy.spatial.distance import cdist
+from sklearn.utils.linear_assignment_ import linear_assignment
 
 from lib.trace import State, Trace
+from xutils import box
+from xutils.nms import nms
+from xutils.kalmanfilter import KalmanFilter
 
 from models.classification.classifier import PatchClassifier
 from models.reid import load_reid_model, extract_reid_features
@@ -10,26 +16,125 @@ from models.reid import load_reid_model, extract_reid_features
 
 class Tracker(object):
     def __init__(self,
-                 min_score: float = .2, min_dist: float = .64, min_time: int = 120):
+                 min_score: float = .2, min_dist: float = .64, max_lost: int = 120,
+                 use_tracking: bool = True, use_refind: bool = True):
 
         self.min_score = min_score
         self.min_dist = min_dist
-        self.min_time = min_time
+        self.max_lost = max_lost
+
+        self.use_tracking = use_tracking
+        self.use_refind = use_refind
 
         self.tracked = []
         self.lost = []
+        self.removed = []
 
+        self.motion = KalmanFilter()
         self.classifier = PatchClassifier()
         self.identifier = load_reid_model()
 
         self.frame = 0
 
+    @staticmethod
+    def iou_distance(first: List[Trace], second: List[Trace]) \
+            -> np.ndarray:
+        """Compute cost based on IoU
+
+        Args:
+            first:
+            second:
+
+        Returns: cost_matrix
+        """
+        unions = np.zeros((len(first), len(second)), dtype=np.float)
+
+        if unions.size:
+            unions = box.iou(
+                np.ascontiguousarray([track.to_tlbr for track in first], dtype=np.float),
+                np.ascontiguousarray([track.to_tlbr for track in second], dtype=np.float)
+            )
+
+        return 1 - unions
+
+    @staticmethod
+    def nearest_distance(tracks: list, detections: list, metric='cosine')\
+            -> np.ndarray:
+        """Compute cost based on ReID features
+
+        Args:
+            tracks:
+            detections:
+            metric:
+
+        Returns: cost matrix
+        """
+        cost = np.zeros((len(tracks), len(detections)), dtype=np.float32)
+
+        if cost.size:
+            features = np.fromiter(map(lambda t: t.feature_current, detections), dtype=np.float32)
+            for index, track in enumerate(tracks):
+                cost[index, :] = np.maximum(0.0, cdist(track.features, features, metric).min(axis=0))
+
+        return cost
+
+    @staticmethod
+    def cost(motion, cost: np.ndarray,
+             tracks: list, detections: list, only_position: bool = False)\
+            -> np.ndarray:
+        """Gate cost matrix
+
+        Args:
+            motion:
+            cost:
+            tracks:
+            detections:
+            only_position:
+
+        Returns: cost matrix
+        """
+        if cost.size:
+            dimension = 2 if only_position else 4
+            threshold = motion.threshold[dimension]
+            measurements = np.fromiter(map(lambda d: d.to_tlwh, detections))
+
+            for index, track in enumerate(tracks):
+                distance = motion.gating_distance(
+                    measurements,
+                    track.mean,
+                    track.conv,
+                    only_position
+                )
+                cost[index, distance > threshold] = np.inf
+
+        return cost
+
+    @staticmethod
+    def assignment(cost: np.ndarray, thresh: float, epsilon: float = 1e-4)\
+            -> Tuple[np.ndarray, Tuple[int], Tuple[int]]:
+        if not cost.size:
+            return np.empty((0, 2), dtype=int),\
+                   tuple(range(np.size(cost, 0))),\
+                   tuple(range(np.size(cost, 1)))
+
+        cost[cost > thresh] = thresh + epsilon
+        indices = linear_assignment(cost)
+        matches = indices[cost[tuple(zip(*indices))] <= thresh]
+
+        return matches, \
+               tuple(set(range(np.size(cost, 0)) - set(matches[:, 0]))), \
+               tuple(set(range(np.size(cost, 1)) - set(matches[:, 1])))
+
     def update(self, image: np.ndarray, boxes: np.ndarray, scores: np.ndarray):
         self.frame += 1
 
+        refind, lost = [], []
+        activated, removed = [], []
+        # Step 1. Prediction
         for track in chain(self.tracked, self.lost):
             track.predict()
 
+        # Step 2. Selection by score
         if scores is None:
             scores = np.ones(np.size(boxes, 0), dtype=float)
 
@@ -47,262 +152,106 @@ class Tracker(object):
         scores[0:np.size(boxes, 0)] = 1.
         scores = scores * class_scores
 
-        # TODO: nms
+        # Non-maxima suppression
+        if len(detections) > 0:
+            mask = np.zeros(np.size(rois, 0), dtype=np.bool)
+            mask[nms(rois, scores.reshape(-1), overlap=.4)] = True
 
-        predictions = filter(lambda t: not t.from_det, detections)
-        detections = filter(lambda t: t.from_det, detections)
+            indices = np.zeros_like(detections, dtype=np.bool)
+            indices[np.where(mask & (scores >= self.min_score))] = True
 
+            detections = compress(detections, indices)
+            scores = scores[indices]
+
+            for detection, score in zip(detections, scores):
+                detection.score = score
+
+        predictions = list(filter(lambda t: not t.from_det, detections))
+        detections = list(filter(lambda t: t.from_det, detections))
+
+        # set features
         features = extract_reid_features(self.identifier, image, map(lambda t: t.to_tlbr, detections))
         features = features.cpu().numpy()
 
         for idx, detection in enumerate(detections):
             detection.feature = features[1]
 
-        unconfirmed, tracked = [], []
+        # Step3. Association for tracked
+        # matching for tracked target
+        unconfirmed = list(filter(lambda t: not t.is_activated, self.tracked))
+        tracked = list(filter(lambda t: t.from_det, self.tracked))
 
-        group_key = lambda trace: trace.is_activated
-        groupby(sorted(tracked, key=group_key), key=group_key)
+        distance = self.nearest_distance(tracked, detections, metric='euclidean')
+        cost = self.cost(self.motion, distance, tracked, detections)
+        matches, u_track, u_detection = self.assignment(cost, thresh=self.min_dist)
 
-        for track in self.tracked:
-
-            tee(l)
-
-            """step 3: association for tracked"""
-            # matching for tracked targets
-            unconfirmed = []
-            tracked_stracks = []  # type: list[STrack]
-            for track in self.tracked_stracks:
-                if not track.is_activated:
-                    unconfirmed.append(track)
-                else:
-                    tracked_stracks.append(track)
-
-            dists = matching.nearest_reid_distance(tracked_stracks, detections, metric='euclidean')
-            dists = matching.gate_cost_matrix(self.kalman_filter, dists, tracked_stracks, detections)
-            matches, u_track, u_detection = matching.linear_assignment(dists, thresh=self.min_ap_dist)
-
-            for itracked, idet in matches:
-                tracked_stracks[itracked].update(detections[idet], self.frame_id, image)
-
-            # matching for missing targets
-            detections = [detections[i] for i in u_detection]
-            dists = matching.nearest_reid_distance(self.lost_stracks, detections, metric='euclidean')
-            dists = matching.gate_cost_matrix(self.kalman_filter, dists, self.lost_stracks, detections)
-            matches, u_lost, u_detection = matching.linear_assignment(dists, thresh=self.min_ap_dist)
-            for ilost, idet in matches:
-                track = self.lost_stracks[ilost]  # type: STrack
-                det = detections[idet]
-                track.re_activate(det, self.frame_id, image, new_id=not self.use_refind)
-                refind_stracks.append(track)
-
-            # remaining tracked
-            # tracked
-            len_det = len(u_detection)
-            detections = [detections[i] for i in u_detection] + pred_dets
-            r_tracked_stracks = [tracked_stracks[i] for i in u_track]
-            dists = matching.iou_distance(r_tracked_stracks, detections)
-            matches, u_track, u_detection = matching.linear_assignment(dists, thresh=0.8)
-            for itracked, idet in matches:
-                r_tracked_stracks[itracked].update(detections[idet], self.frame_id, image, update_feature=True)
-            for it in u_track:
-                track = r_tracked_stracks[it]
-                track.lost()
-                lost_stracks.append(track)
-
-            # unconfirmed
-            detections = [detections[i] for i in u_detection if i < len_det]
-            dists = matching.iou_distance(unconfirmed, detections)
-            matches, u_unconfirmed, u_detection = matching.linear_assignment(dists, thresh=0.8)
-            for itracked, idet in matches:
-                unconfirmed[itracked].update(detections[idet], self.frame_id, image, update_feature=True)
-            for it in u_unconfirmed:
-                track = unconfirmed[it]
-                track.remove()
-                removed_stracks.append(track)
-
-
-class OnlineTracker(object):
-
-    def __init__(self, min_cls_score=0.2, min_ap_dist=0.64, max_time_lost=120, use_tracking=True, use_refind=True):
-
-        self.min_cls_score = min_cls_score
-        self.min_ap_dist = min_ap_dist
-        self.max_time_lost = max_time_lost
-
-        self.kalman_filter = KalmanFilter()
-
-        self.tracked_stracks = []   # type: list[STrack]
-        self.lost_stracks = []      # type: list[STrack]
-        self.removed_stracks = []   # type: list[STrack]
-
-        self.use_refind = use_refind
-        self.use_tracking = use_tracking
-        self.classifier = PatchClassifier()
-        self.reid_model = load_reid_model()
-
-        self.frame_id = 0
-
-    def update(self, image, tlwhs, det_scores=None):
-        self.frame_id += 1
-
-        activated_starcks = []
-        refind_stracks = []
-        lost_stracks = []
-        removed_stracks = []
-
-        iou_tracking = []
-        iou_finished = []
-
-        """step 1: prediction"""
-        for strack in itertools.chain(self.tracked_stracks, self.lost_stracks):
-            strack.predict()
-
-        """step 2: scoring and selection"""
-        if det_scores is None:
-            det_scores = np.ones(len(tlwhs), dtype=float)
-
-        dets = tlwhs[np.where(det_scores>=.0)]
-        updated_iou_track = []
-        for track in iou_tracking:
-            if len(dets) > 0:
-                best = max(dets, key=lambda x: iou(track['bboxes'][-1], x))
-                if iou(track, best) >= .3:
-                    track['bboxes'].append(best)
-                    track['score'] = max(track['score'], det_scores[np.where(tlwhs == best)])
-                    updated_iou_track.append(track)
-                    dets = np.delete(dets[np.where(dets == best)])
-            if len(updated_iou_track) == 0 or track is not updated_iou_track[-1]:
-                if track['score'] >= .65 and len(track['bboxes']) >= 3:
-                    iou_finished.append(track)
-
-        detections = []
-        new_tracks = []
-        for tlwh, score in zip(tlwhs, det_scores):
-            detections.append(STrack(tlwh, score, from_det=True))
-            new_tracks.append({'bboxes': [tlwh], 'score': score, 'start': self.frame_id})
-
-        for tracks in updated_iou_track + new_tracks:
-            detections.append(STrack(tracks['bboxes'][-1], tracks['score'], from_det=False))
-
-        if self.classifier is None:
-            pred_dets = []
-        else:
-            self.classifier.update(image)
-
-            n_dets = len(tlwhs)
-            if self.use_tracking:
-                tracks = [STrack(t.self_tracking(image), t.tracklet_score(), from_det=False)
-                          for t in itertools.chain(self.tracked_stracks, self.lost_stracks) if t.is_activated]
-                detections.extend(tracks)
-            rois = np.asarray([d.tlbr for d in detections], dtype=np.float32)
-
-            cls_scores = self.classifier.predict(rois)
-            scores = np.asarray([d.score for d in detections], dtype=np.float)
-            scores[0:n_dets] = 1.
-            scores = scores * cls_scores
-            # nms
-            if len(detections) > 0:
-                keep = nms_detections(rois, scores.reshape(-1), nms_thresh=0.4)
-                mask = np.zeros(len(rois), dtype=np.bool)
-                mask[keep] = True
-                keep = np.where(mask & (scores >= self.min_cls_score))[0]
-                detections = [detections[i] for i in keep]
-                scores = scores[keep]
-                for d, score in zip(detections, scores):
-                    d.score = score
-            pred_dets = [d for d in detections if not d.from_det]
-            detections = [d for d in detections if d.from_det]
-
-        # set features
-        tlbrs = [det.tlbr for det in detections]
-        features = extract_reid_features(self.reid_model, image, tlbrs)
-        features = features.cpu().numpy()
-        for i, det in enumerate(detections):
-            det.set_feature(features[i])
-
-        """step 3: association for tracked"""
-        # matching for tracked targets
-        unconfirmed = []
-        tracked_stracks = []  # type: list[STrack]
-        for track in self.tracked_stracks:
-            if not track.is_activated:
-                unconfirmed.append(track)
-            else:
-                tracked_stracks.append(track)
-
-        dists = matching.nearest_reid_distance(tracked_stracks, detections, metric='euclidean')
-        dists = matching.gate_cost_matrix(self.kalman_filter, dists, tracked_stracks, detections)
-        matches, u_track, u_detection = matching.linear_assignment(dists, thresh=self.min_ap_dist)
-
-        for itracked, idet in matches:
-            tracked_stracks[itracked].update(detections[idet], self.frame_id, image)
+        for track, det in matches:
+            tracked[track].update(detections[det], self.frame, image)
 
         # matching for missing targets
-        detections = [detections[i] for i in u_detection]
-        dists = matching.nearest_reid_distance(self.lost_stracks, detections, metric='euclidean')
-        dists = matching.gate_cost_matrix(self.kalman_filter, dists, self.lost_stracks, detections)
-        matches, u_lost, u_detection = matching.linear_assignment(dists, thresh=self.min_ap_dist)
-        for ilost, idet in matches:
-            track = self.lost_stracks[ilost]  # type: STrack
-            det = detections[idet]
-            track.re_activate(det, self.frame_id, image, new_id=not self.use_refind)
-            refind_stracks.append(track)
+        detections = list(map(lambda u: detection[u], u_detection))
+        distance = self.nearest_distance(self.lost, detections, metric='euclidean')
+        cost = self.cost(self.motion, distance, self.lost, detections)
+        matches, u_lost, u_detection = self.assignment(cost, thresh=self.min_dist)
+
+        for lost, det in matches:
+            self.lost[lost].reactivate(detections[det], self.frame, image, reassign=not self.use_refind)
+            refind.append(self.lost[lost])
 
         # remaining tracked
-        # tracked
-        len_det = len(u_detection)
-        detections = [detections[i] for i in u_detection] + pred_dets
-        r_tracked_stracks = [tracked_stracks[i] for i in u_track]
-        dists = matching.iou_distance(r_tracked_stracks, detections)
-        matches, u_track, u_detection = matching.linear_assignment(dists, thresh=0.8)
-        for itracked, idet in matches:
-            r_tracked_stracks[itracked].update(detections[idet], self.frame_id, image, update_feature=True)
-        for it in u_track:
-            track = r_tracked_stracks[it]
+        matched_size = len(u_detection)
+        detections = list(map(lambda u: detection[u], u_detection)) + predictions
+        u_tracked = list(map(lambda u: tracked[u], u_track))
+        distance = self.iou_distance(u_tracked, detections)
+        matches, u_track, u_detection = self.assignment(distance, thresh=.8)
+
+        for track, det in matches:
+            u_tracked[track].update(detections[det], self.frame, image, update_feature=True)
+
+        for track in map(lambda u: u_tracked[u], u_track):
             track.lost()
-            lost_stracks.append(track)
+            lost.append(track)
 
         # unconfirmed
-        detections = [detections[i] for i in u_detection if i < len_det]
-        dists = matching.iou_distance(unconfirmed, detections)
-        matches, u_unconfirmed, u_detection = matching.linear_assignment(dists, thresh=0.8)
-        for itracked, idet in matches:
-            unconfirmed[itracked].update(detections[idet], self.frame_id, image, update_feature=True)
-        for it in u_unconfirmed:
-            track = unconfirmed[it]
+        detections = list(map(lambda u: detections[u], filter(lambda u: u < matched_size, u_detection)))
+        distance = self.iou_distance(unconfirmed, detections)
+        matches, u_unconfirmed, u_detection = self.assignment(distance, thresh=.8)
+
+        for track, det in matches:
+            unconfirmed[track].update(detections[det], self.frame, image, update_feature=True)
+
+        for track in map(lambda u: unconfirmed[u], u_unconfirmed):
             track.remove()
-            removed_stracks.append(track)
+            removed.append(track)
 
-        """step 4: init new stracks"""
-        for inew in u_detection:
-            track = detections[inew]
-            if not track.from_det or track.score < 0.6:
-                continue
-            track.activate(self.kalman_filter, self.frame_id, image)
-            activated_starcks.append(track)
+        # Step 4. Init new trace
+        for track in filter(lambda t: t.from_det and t.score >= .6,
+                            map(lambda u: detections[u], u_detection)):
+            track.activate(self.frame, image, self.motion)
+            activated.append(track)
 
-        """step 6: update state"""
-        for track in self.lost_stracks:
-            if self.frame_id - track.end_frame > self.max_time_lost:
-                track.remove()
-                removed_stracks.append(track)
+        # Step 5. Update state
+        for track in filter(lambda t: self.frame - t.frame > self.max_lost, self.lost):
+            track.remove()
+            removed.append(track)
 
-        self.tracked_stracks = [t for t in self.tracked_stracks if t.state == State.Tracked]
-        self.lost_stracks = [t for t in self.lost_stracks if t.state == State.Lost]  # type: list[STrack]
-        self.tracked_stracks.extend(activated_starcks)
-        self.tracked_stracks.extend(refind_stracks)
-        self.lost_stracks.extend(lost_stracks)
-        self.removed_stracks.extend(removed_stracks)
+        self.tracked = list(chain(
+            filter(lambda t: t.state == State.Tracked, self.tracked),
+            activated, refind,
+        ))
+        self.lost = list(chain(
+            filter(lambda t: t.state == State.Lost, self.lost),
+            lost
+        ))
+        self.removed.extend(removed)
 
-        # output_stracks = self.tracked_stracks + self.lost_stracks
+        lost_score = self.classifier.predict(
+            np.fromiter(map(lambda t: t.to_tlbr, self.lost), dtype=np.float32)
+        )
 
-        # get scores of lost tracks
-        rois = np.asarray([t.tlbr for t in self.lost_stracks], dtype=np.float32)
-        lost_cls_scores = self.classifier.predict(rois)
-        out_lost_stracks = [t for i, t in enumerate(self.lost_stracks)
-                            if lost_cls_scores[i] > 0.3 and self.frame_id - t.end_frame <= 4]
-        output_tracked_stracks = [track for track in self.tracked_stracks if track.is_activated]
-
-        output_stracks = output_tracked_stracks + out_lost_stracks
-
-        return output_stracks
+        return chain(
+            filter(lambda t: t.is_activated, self.tracked),
+            map(lambda it: it[1],
+                filter(lambda it: lost_score[it[0]] > .3 and self.frame - it[1].frame <= 4,
+                       enumerate(self.lost)))
+        )
