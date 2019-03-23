@@ -25,8 +25,6 @@ if __name__ == '__main__':
                         help="train data path")
     parser.add_argument("--dest", dest='dest', type=str, default='./results',
                         help="result destination")
-    parser.add_argument("--verbose", action='store_true', default=True,
-                        help="Print out logs")
 
     arguments = parser.parse_args()
 

@@ -8,3 +8,5 @@ sklearn
 fire
 numba
 scipy
+tqdm
+torch
