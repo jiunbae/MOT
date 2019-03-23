@@ -4,23 +4,6 @@ import torch.utils.data as data
 from scipy.misc import imread
 
 
-"""
-labels={'ped', ...			% 1
-'person_on_vhcl', ...	% 2
-'car', ...				% 3
-'bicycle', ...			% 4
-'mbike', ...			% 5
-'non_mot_vhcl', ...		% 6
-'static_person', ...	% 7
-'distractor', ...		% 8
-'occluder', ...			% 9
-'occluder_on_grnd', ...		%10
-'occluder_full', ...		% 11
-'reflection', ...		% 12
-'crowd' ...			% 13
-};
-"""
-
 def read_mot_results(filename, is_gt=False):
     labels = {1, 7, -1}
     targets = dict()
@@ -39,6 +22,7 @@ def read_mot_results(filename, is_gt=False):
                 targets[fid].append((tlwh, target_id))
 
     return targets
+
 
 class MOTSeq(data.Dataset):
     def __init__(self, root, seq_name, min_score):
@@ -82,8 +66,10 @@ class MOTSeq(data.Dataset):
 
         return img, tlwhs, scores, gt_tlwhs, gt_ids
 
+
 def collate_fn(data):
     return data[0]
+
 
 def get_loader(root, name, min_score=-np.inf, num_workers=3):
     return data.DataLoader(MOTSeq(root, name, min_score), 1, False, num_workers=num_workers, collate_fn=collate_fn)
