@@ -4,8 +4,7 @@ from distutils.version import LooseVersion
 import torch
 from torch.autograd import Variable
 
-from utils import bbox as bbox_utils
-from utils.log import logger
+from utils import box
 from models import net_utils
 from models.reid.image_part_aligned import Model
 
@@ -16,7 +15,6 @@ def load_reid_model():
     ckpt = 'data/googlenet_part8_all_xavier_ckpt_56.h5'
 
     net_utils.load_net(ckpt, model)
-    logger.info('Load ReID model from {}'.format(ckpt))
 
     model = model.cuda()
     model.eval()
@@ -32,7 +30,7 @@ def im_preprocess(image):
 
 def extract_image_patches(image, bboxes):
     bboxes = np.round(bboxes).astype(np.int)
-    bboxes = bbox_utils.clip_boxes(bboxes, image.shape)
+    bboxes = box.clip(bboxes, image.shape)
     patches = [image[box[1]:box[3], box[0]:box[2]] for box in bboxes]
     return patches
 

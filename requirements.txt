@@ -10,3 +10,4 @@ numba
 scipy
 tqdm
 torch
+torchvision

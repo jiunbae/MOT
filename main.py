@@ -1,8 +1,8 @@
 import argparse
 from pathlib import Path
 
-from tracker.mot_tracker import OnlineTracker
-from xutils.data import Dataset, MOT
+from lib.tracker import Tracker
+from utils.data import Dataset, MOT
 
 
 def main(args: argparse.Namespace):
@@ -10,7 +10,7 @@ def main(args: argparse.Namespace):
     dest = Path(args.dest)
 
     for sequence in dataset.iterdir():
-        tracker = OnlineTracker()
+        tracker = Tracker()
         loader = Dataset(str(sequence), MOT)
 
         with open(str(dest.joinpath('{}.txt'.format(sequence.stem))), 'w') as file:

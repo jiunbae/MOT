@@ -2,12 +2,9 @@ import os
 import collections
 import torch
 import torch.nn as nn
-from torch.autograd import Variable
 import numpy as np
 from copy import deepcopy
 import pickle
-
-from utils.log import logger
 
 
 class ConcatAddTable(nn.Module):
@@ -83,7 +80,6 @@ def save_net(fname, net, epoch=-1, optimizers=None, rm_prev_opt=False, max_n_ckp
             for filename in os.listdir(root):
                 filename = os.path.join(root, filename)
                 if filename.endswith('.optimizer_state.pk') and filename != state_file:
-                    logger.info(('Remove {}'.format(filename)))
                     os.remove(filename)
 
         # remove ckpt
@@ -94,7 +90,6 @@ def save_net(fname, net, epoch=-1, optimizers=None, rm_prev_opt=False, max_n_ckp
             if len(ckpts) > max_n_ckpts:
                 for ckpt in ckpts[0:-max_n_ckpts]:
                     filename = os.path.join(root, ckpt)
-                    logger.info('Remove {}'.format(filename))
                     os.remove(filename)
 
 
@@ -114,11 +109,13 @@ def load_net(fname, net, prefix='', load_state_dict=False):
             if k in h5f:
                 param = torch.from_numpy(np.asarray(h5f[k]))
                 if v.size() != param.size():
-                    logger.warning('Inconsistent shape: {}, {}'.format(v.size(), param.size()))
+                    # Inconsistent shape
+                    pass
                 else:
                     v.copy_(param)
             else:
-                logger.warning('No layer: {}'.format(k))
+                # No layer
+                pass
 
         epoch = h5f.attrs['epoch'] if 'epoch' in h5f.attrs else -1
 

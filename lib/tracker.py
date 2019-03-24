@@ -1,17 +1,13 @@
-from typing import Tuple, List
 from itertools import chain, compress
 
 import numpy as np
-from scipy.spatial.distance import cdist
-from sklearn.utils.linear_assignment_ import linear_assignment
-
-from lib.trace import State, Trace
-from xutils import box
-from xutils.nms import nms
-from xutils.kalmanfilter import KalmanFilter
 
 from models.classification.classifier import PatchClassifier
-from models.reid import load_reid_model, extract_reid_features
+from lib.trace import State, Trace
+from xmodels.identifier import Identifier
+from utils import matching
+from utils.nms import nms
+from utils.kalmanfilter import KalmanFilter
 
 
 class Tracker(object):
@@ -32,98 +28,11 @@ class Tracker(object):
 
         self.motion = KalmanFilter()
         self.classifier = PatchClassifier()
-        self.identifier = load_reid_model()
+        self.identifier = Identifier()
+
+        self.identifier.load()
 
         self.frame = 0
-
-    @staticmethod
-    def iou_distance(first: List[Trace], second: List[Trace]) \
-            -> np.ndarray:
-        """Compute cost based on IoU
-
-        Args:
-            first:
-            second:
-
-        Returns: cost_matrix
-        """
-        unions = np.zeros((len(first), len(second)), dtype=np.float)
-
-        if unions.size:
-            unions = box.iou(
-                np.ascontiguousarray([track.to_tlbr for track in first], dtype=np.float),
-                np.ascontiguousarray([track.to_tlbr for track in second], dtype=np.float)
-            )
-
-        return 1 - unions
-
-    @staticmethod
-    def nearest_distance(tracks: list, detections: list, metric='cosine')\
-            -> np.ndarray:
-        """Compute cost based on ReID features
-
-        Args:
-            tracks:
-            detections:
-            metric:
-
-        Returns: cost matrix
-        """
-        cost = np.zeros((len(tracks), len(detections)), dtype=np.float32)
-
-        if cost.size:
-            features = np.fromiter(map(lambda t: t.feature_current, detections), dtype=np.float32)
-            for index, track in enumerate(tracks):
-                cost[index, :] = np.maximum(0.0, cdist(track.features, features, metric).min(axis=0))
-
-        return cost
-
-    @staticmethod
-    def cost(motion, cost: np.ndarray,
-             tracks: list, detections: list, only_position: bool = False)\
-            -> np.ndarray:
-        """Gate cost matrix
-
-        Args:
-            motion:
-            cost:
-            tracks:
-            detections:
-            only_position:
-
-        Returns: cost matrix
-        """
-        if cost.size:
-            dimension = 2 if only_position else 4
-            threshold = motion.threshold[dimension]
-            measurements = np.fromiter(map(lambda d: d.to_tlwh, detections))
-
-            for index, track in enumerate(tracks):
-                distance = motion.gating_distance(
-                    measurements,
-                    track.mean,
-                    track.conv,
-                    only_position
-                )
-                cost[index, distance > threshold] = np.inf
-
-        return cost
-
-    @staticmethod
-    def assignment(cost: np.ndarray, thresh: float, epsilon: float = 1e-4)\
-            -> Tuple[np.ndarray, Tuple[int], Tuple[int]]:
-        if not cost.size:
-            return np.empty((0, 2), dtype=int),\
-                   tuple(range(np.size(cost, 0))),\
-                   tuple(range(np.size(cost, 1)))
-
-        cost[cost > thresh] = thresh + epsilon
-        indices = linear_assignment(cost)
-        matches = indices[cost[tuple(zip(*indices))] <= thresh]
-
-        return matches, \
-               tuple(set(range(np.size(cost, 0)) - set(matches[:, 0]))), \
-               tuple(set(range(np.size(cost, 1)) - set(matches[:, 1])))
 
     def update(self, image: np.ndarray, boxes: np.ndarray, scores: np.ndarray):
         self.frame += 1
@@ -170,8 +79,7 @@ class Tracker(object):
         detections = list(filter(lambda t: t.from_det, detections))
 
         # set features
-        features = extract_reid_features(self.identifier, image, map(lambda t: t.to_tlbr, detections))
-        features = features.cpu().numpy()
+        features = self.identifier.extract(image, np.formiter(map(lambda t: t.to_tlbr, detections), dtype=np.int))
 
         for idx, detection in enumerate(detections):
             detection.feature = features[1]
@@ -181,18 +89,18 @@ class Tracker(object):
         unconfirmed = list(filter(lambda t: not t.is_activated, self.tracked))
         tracked = list(filter(lambda t: t.from_det, self.tracked))
 
-        distance = self.nearest_distance(tracked, detections, metric='euclidean')
-        cost = self.cost(self.motion, distance, tracked, detections)
-        matches, u_track, u_detection = self.assignment(cost, thresh=self.min_dist)
+        distance = matching.nearest_distance(tracked, detections, metric='euclidean')
+        cost = matching.gate_cost(self.motion, distance, tracked, detections)
+        matches, u_track, u_detection = matching.assignment(cost, threshold=self.min_dist)
 
         for track, det in matches:
             tracked[track].update(detections[det], self.frame, image)
 
         # matching for missing targets
         detections = list(map(lambda u: detection[u], u_detection))
-        distance = self.nearest_distance(self.lost, detections, metric='euclidean')
-        cost = self.cost(self.motion, distance, self.lost, detections)
-        matches, u_lost, u_detection = self.assignment(cost, thresh=self.min_dist)
+        distance = matching.nearest_distance(self.lost, detections, metric='euclidean')
+        cost = matching.gate_cost(self.motion, distance, self.lost, detections)
+        matches, u_lost, u_detection = matching.assignment(cost, threshold=self.min_dist)
 
         for lost, det in matches:
             self.lost[lost].reactivate(detections[det], self.frame, image, reassign=not self.use_refind)
@@ -202,8 +110,8 @@ class Tracker(object):
         matched_size = len(u_detection)
         detections = list(map(lambda u: detection[u], u_detection)) + predictions
         u_tracked = list(map(lambda u: tracked[u], u_track))
-        distance = self.iou_distance(u_tracked, detections)
-        matches, u_track, u_detection = self.assignment(distance, thresh=.8)
+        distance = matching.iou_distance(u_tracked, detections)
+        matches, u_track, u_detection = matching.assignment(distance, threshold=.8)
 
         for track, det in matches:
             u_tracked[track].update(detections[det], self.frame, image, update_feature=True)
@@ -214,8 +122,8 @@ class Tracker(object):
 
         # unconfirmed
         detections = list(map(lambda u: detections[u], filter(lambda u: u < matched_size, u_detection)))
-        distance = self.iou_distance(unconfirmed, detections)
-        matches, u_unconfirmed, u_detection = self.assignment(distance, thresh=.8)
+        distance = matching.iou_distance(unconfirmed, detections)
+        matches, u_unconfirmed, u_detection = matching.assignment(distance, threshold=.8)
 
         for track, det in matches:
             unconfirmed[track].update(detections[det], self.frame, image, update_feature=True)
