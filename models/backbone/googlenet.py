@@ -1,27 +1,6 @@
 import torch
 import torch.nn as nn
-from torch.legacy.nn import SpatialCrossMapLRN
-
-
-class SpatialCrossMap(nn.Module):
-    def __init__(self, size, alpha=1e-4, beta=0.75, k=1):
-        super(SpatialCrossMap, self).__init__()
-        self.size = size
-        self.alpha = alpha
-        self.beta = beta
-        self.k = k
-        self.lrn = None
-        self.save_tensor = None
-
-    def forward(self, tensor: torch.Tensor):
-        self.save_tensor = tensor
-        self.lrn = SpatialCrossMapLRN(self.size, self.alpha, self.beta, self.k)
-        self.lrn.type(tensor.type())
-
-        return self.lrn.forward(tensor)
-
-    def backward(self, grad):
-        return self.lrn.backward(self.save_tensor, grad)
+from torch.nn.modules import LocalResponseNorm
 
 
 class Inception(nn.Module):
@@ -59,11 +38,12 @@ class Inception(nn.Module):
         )
 
     def forward(self, x):
-        y1 = self.b1(x)
-        y2 = self.b2(x)
-        y3 = self.b3(x)
-        y4 = self.b4(x)
-        return torch.cat([y1,y2,y3,y4], 1)
+        return torch.cat([
+            self.b1(x),
+            self.b2(x),
+            self.b3(x),
+            self.b4(x),
+        ], 1)
 
 
 class GoogLeNet(nn.Module):
@@ -77,7 +57,7 @@ class GoogLeNet(nn.Module):
             nn.ReLU(True),
 
             nn.MaxPool2d(3, stride=2, ceil_mode=True),
-            SpatialCrossMap(5),
+            LocalResponseNorm(5, alpha=1e-4, beta=0.75, k=1),
 
             nn.Conv2d(64, 64, 1),
             nn.ReLU(True),
@@ -85,7 +65,7 @@ class GoogLeNet(nn.Module):
             nn.Conv2d(64, 192, 3, padding=1),
             nn.ReLU(True),
 
-            SpatialCrossMap(5),
+            LocalResponseNorm(5, alpha=1e-4, beta=0.75, k=1),
             nn.MaxPool2d(3, stride=2, ceil_mode=True),
         )
 
