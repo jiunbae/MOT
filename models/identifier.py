@@ -13,6 +13,8 @@ class Identifier(nn.Module):
         super(Identifier, self).__init__()
         self.parts = parts
 
+        self.epoch, self.lr = 0, .01
+
         self.backbone = GoogLeNet()
         self.bridge = nn.Conv2d(832, 512, 1)
         self.branch = nn.Conv2d(512, self.parts, 1)
@@ -94,4 +96,6 @@ class Identifier(nn.Module):
             lr = file.attrs.get('lr', -1)
             lr = np.asarray([lr] if lr > 0 else [], dtype=np.float)
 
-            return epoch, lr
+            self.epoch, self.lr = epoch, lr
+
+            return self

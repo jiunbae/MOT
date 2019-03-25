@@ -3,6 +3,8 @@ from enum import Enum
 
 import numpy as np
 
+from utils import box
+
 
 class State(Enum):
     New = 0
@@ -66,7 +68,7 @@ class Trace(object):
         self.begin = self.frame = frame
 
         self.motion = motion
-        self.mean, self.cov = self.motion.initialize(self.box)
+        self.mean, self.cov = self.motion.initialize(box.calibrate(self.box))
 
     def reactivate(self, frame: int, image: np.ndarray, trace, reassign: bool = False):
         self.state = State.Tracked
@@ -78,7 +80,7 @@ class Trace(object):
         self.is_activated = True
 
         self.mean, self.cov = self.motion.update(
-            self.mean, self.cov, trace.box
+            box.calibrate(trace.box), self.mean, self.cov,
         )
 
         if reassign:
@@ -98,7 +100,7 @@ class Trace(object):
         self.tracked_length += 1
 
         self.mean, self.cov = self.motion.update(
-            self.mean, self.conv, trace.box
+            box.calibrate(trace.box), self.mean, self.cov,
         )
         self.is_activated = True
 
@@ -108,6 +110,12 @@ class Trace(object):
             self.feature = trace.feature_current
             if self.tracker:
                 self.tracker.update(image, self.box)
+
+    def remove(self):
+        self.state = State.Removed
+
+    def lost(self):
+        self.state = State.Lost
 
     @staticmethod
     def next():

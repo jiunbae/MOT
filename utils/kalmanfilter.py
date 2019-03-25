@@ -3,8 +3,6 @@ from typing import Tuple
 import numpy as np
 import scipy.linalg
 
-from utils.box import calibration
-
 
 class KalmanFilter(object):
     # chi2inv95
@@ -51,8 +49,7 @@ class KalmanFilter(object):
         self._std_weight_position = 1. / 20
         self._std_weight_velocity = 1. / 160
 
-    @calibration
-    def initiate(self, measurement: np.ndarray) \
+    def initialize(self, measurement: np.ndarray) \
             -> Tuple[np.ndarray, np.ndarray]:
         """Create track from unassociated measurement.
 
@@ -139,7 +136,8 @@ class KalmanFilter(object):
 
         mean = np.dot(self._update_mat, mean)
         covariance = np.linalg.multi_dot((
-            self._update_mat, covariance, self._update_mat.T))
+            self._update_mat, covariance, self._update_mat.T
+        ))
         return mean, covariance + innovation_cov
 
     def update(self, measurement: np.ndarray, mean: np.ndarray, covariance: np.ndarray, ) \
@@ -173,8 +171,8 @@ class KalmanFilter(object):
             kalman_gain, projected_cov, kalman_gain.T))
         return new_mean, new_covariance
 
-    @calibration
-    def gating_distance(self, mean: np.ndarray, covariance: np.ndarray, measurements: np.ndarray,
+    def gating_distance(self, measurements: np.ndarray,
+                        mean: np.ndarray, covariance: np.ndarray,
                         only_position: bool = False) \
             -> np.ndarray:
         """Compute gating distance between state distribution and measurements.

@@ -7,6 +7,7 @@ import pandas as pd
 from torch.utils import data
 import skimage
 
+
 class BaseLoader:
     def __init__(self, root_dir: str):
         """
@@ -51,11 +52,11 @@ class MOT(BaseLoader):
 
         self.images = list(self.root.joinpath(img_dir).glob('*' + img_ext))
 
-        self.gt = pd.read_csv(str(self.root.joinpath('gt/gt.txt')), header=None).values[:, :-3]
-        self.det = pd.read_csv(str(self.root.joinpath('det/det.txt')), header=None).values[:, :-3]
+        self.gt = pd.read_csv(str(self.root.joinpath('gt/gt.txt')), header=None).values
+        self.det = pd.read_csv(str(self.root.joinpath('det/det.txt')), header=None).values
 
     def __len__(self):
-        return self.sequence.get('seqLength', 0)
+        return int(self.sequence.get('seqLength', 0))
 
     def __getitem__(self, idx: int) \
             -> Tuple[str, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
@@ -80,9 +81,21 @@ class Dataset(data.Dataset):
 
         self.root = Path(root_dir)
         self.loader = loader(root_dir)
+        self.index = 0
 
     def __len__(self):
         return len(self.loader)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        try:
+            self.index += 1
+            return self[self.index]
+        except IndexError:
+            self.index = 0
+            raise StopIteration
 
     def __getitem__(self, idx):
         image, *data = self.loader[idx]

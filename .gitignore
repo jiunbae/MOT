@@ -14,3 +14,4 @@ build/
 *.o
 utils/bbox.c
 
+results/

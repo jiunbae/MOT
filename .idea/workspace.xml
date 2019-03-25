@@ -2,80 +2,33 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="85a95566-2f6e-47ef-a662-f7dd79db4811" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/other.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/xmodels/classifier.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/xmodels/identifier.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/MOT.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/MOT.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datasets/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/image.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datasets/mot_seq.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval_mot.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/trace.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/trace.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/tracker.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/tracker.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/net_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/net_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/reid/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/reid/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-01-DPM.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-01-FRCNN.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-01-SDP.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-02-DPM.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-02-FRCNN.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-02-SDP.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-03-DPM.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-03-FRCNN.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-03-SDP.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-04-DPM.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-04-FRCNN.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-04-SDP.txt" beforeDir="false" afterPath="$PROJECT_DIR$/utils/matching.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-05-DPM.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-05-FRCNN.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-05-SDP.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-06-DPM.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-06-FRCNN.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-06-SDP.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-07-DPM.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-07-FRCNN.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-07-SDP.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-08-DPM.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-08-FRCNN.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-08-SDP.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-09-DPM.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-09-FRCNN.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-09-SDP.txt" beforeDir="false" afterPath="$PROJECT_DIR$/xmodels/backbone/googlenet.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-10-DPM.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-10-FRCNN.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-10-SDP.txt" beforeDir="false" afterPath="$PROJECT_DIR$/xmodels/backbone/sqeezenet.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-11-DPM.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-11-FRCNN.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-11-SDP.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-12-DPM.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-12-FRCNN.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-12-SDP.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-13-DPM.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-13-FRCNN.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-13-SDP.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-14-DPM.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-14-FRCNN.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/MOT17-14-SDP.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tracker/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/xmodels/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tracker/matching.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tracker/mot_tracker.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tracker/track.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/bbox.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/bbox.pyx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/iou.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/kalman_filter.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/log.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/timer.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/visualization.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/xutils/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/xmodels/backbone/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/xutils/box.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/box.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/xutils/data.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/xutils/kalmanfilter.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/kalmanfilter.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/xutils/motion.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/xutils/nms.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/make.sh" beforeDir="false" afterPath="$PROJECT_DIR$/make.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/backbone/googlenet.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/backbone/googlenet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/backbone/lrn.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/backbone/sqeezenet.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/backbone/sqeezenet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/classification/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/classification/classifier.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/classification/rfcn_cls.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/net_utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/reid/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/reid/image_part_aligned.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/box.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/box.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/data.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/kalmanfilter.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/kalmanfilter.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/matching.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/matching.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/xmodels/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xmodels/backbone/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xmodels/backbone/googlenet.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xmodels/backbone/sqeezenet.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/xmodels/classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/classifier.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/xmodels/identifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/identifier.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -84,9 +37,10 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/MOT$eval_mot.coverage" NAME="main Coverage Results" MODIFIED="1553422970777" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/MOT$test.coverage" NAME="test Coverage Results" MODIFIED="1553444060921" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/MOT$eval.coverage" NAME="eval_mot Coverage Results" MODIFIED="1550424715272" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/MOT$main.coverage" NAME="main Coverage Results" MODIFIED="1553502956764" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/MOT$test.coverage" NAME="test Coverage Results" MODIFIED="1553444060921" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/MOT$eval_mot.coverage" NAME="main Coverage Results" MODIFIED="1553422970777" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="DatabaseView">
     <option name="SHOW_INTERMEDIATE" value="true" />
@@ -109,11 +63,11 @@
     <splitter split-orientation="horizontal" split-proportion="0.5">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file pinned="false" current-in-tab="false">
+          <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/lib/tracker.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="380">
-                  <caret line="32" column="30" selection-start-line="32" selection-start-column="30" selection-end-line="32" selection-end-column="30" />
+                <state relative-caret-position="198">
+                  <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
                   <folding>
                     <element signature="e#0#37#0" expanded="true" />
                   </folding>
@@ -121,37 +75,43 @@
               </provider>
             </entry>
           </file>
-          <file pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/xmodels/classifier.py">
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/models/classifier.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="1151">
-                  <caret line="97" column="9" lean-forward="true" selection-start-line="97" selection-start-column="9" selection-end-line="97" selection-end-column="9" />
+                <state relative-caret-position="162">
+                  <caret line="9" column="55" selection-start-line="9" selection-start-column="55" selection-end-line="9" selection-end-column="55" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/.gitignore">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="306">
+                  <caret line="17" selection-start-line="17" selection-end-line="17" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/models/identifier.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="126">
+                  <caret line="7" column="21" selection-start-line="7" selection-start-column="21" selection-end-line="7" selection-end-column="21" />
                   <folding>
-                    <element signature="e#0#24#0" expanded="true" />
+                    <element signature="e#0#10#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
             </entry>
           </file>
           <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/xmodels/identifier.py">
+            <entry file="file://$PROJECT_DIR$/main.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="228">
-                  <caret line="21" column="17" selection-start-line="21" selection-start-column="17" selection-end-line="21" selection-end-column="17" />
+                <state relative-caret-position="360">
+                  <caret line="23" column="94" selection-start-line="23" selection-start-column="94" selection-end-line="23" selection-end-column="94" />
                   <folding>
-                    <element signature="e#1#11#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/xmodels/backbone/sqeezenet.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="608">
-                  <caret line="32" column="9" lean-forward="true" selection-start-line="32" selection-start-column="9" selection-end-line="32" selection-end-column="9" />
-                  <folding>
-                    <element signature="e#0#21#0" expanded="true" />
+                    <element signature="e#0#15#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -160,52 +120,12 @@
         </leaf>
       </split-first>
       <split-second>
-        <leaf>
+        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
           <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/models/psroi_pooling/src/psroi_pooling_cuda.c">
+            <entry file="file://$PROJECT_DIR$/utils/kalmanfilter.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="456">
-                  <caret line="24" column="36" selection-start-line="24" selection-start-column="36" selection-end-line="24" selection-end-column="36" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/models/psroi_pooling/src/cuda/psroi_pooling_kernel.h">
-              <provider selected="true" editor-type-id="text-editor" />
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/models/psroi_pooling/src/cuda/psroi_pooling_kernel.cu">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="413">
-                  <caret line="172" column="18" selection-start-line="172" selection-start-column="18" selection-end-line="172" selection-end-column="18" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/models/psroi_pooling/src/psroi_pooling_cuda.h">
-              <provider selected="true" editor-type-id="text-editor" />
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/models/classification/classifier.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="1007">
-                  <caret line="53" column="26" lean-forward="true" selection-start-line="53" selection-start-column="26" selection-end-line="53" selection-end-column="26" />
-                  <folding>
-                    <element signature="e#0#18#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/utils/image.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="152">
-                  <caret line="8" column="43" lean-forward="true" selection-start-line="8" selection-start-column="43" selection-end-line="8" selection-end-column="43" />
+                <state relative-caret-position="211">
+                  <caret line="137" selection-start-line="137" selection-end-line="137" />
                   <folding>
                     <element signature="e#0#24#0" expanded="true" />
                   </folding>
@@ -214,10 +134,10 @@
             </entry>
           </file>
           <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/models/classification/rfcn_cls.py">
+            <entry file="file://$PROJECT_DIR$/utils/nms.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="152">
-                  <caret line="14" column="22" selection-start-line="14" selection-start-column="22" selection-end-line="14" selection-end-column="22" />
+                <state relative-caret-position="-280">
+                  <caret line="25" column="24" selection-start-line="25" selection-start-column="24" selection-end-line="25" selection-end-column="24" />
                   <folding>
                     <element signature="e#0#18#0" expanded="true" />
                   </folding>
@@ -226,24 +146,63 @@
             </entry>
           </file>
           <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/models/backbone/lrn.py">
+            <entry file="file://$PROJECT_DIR$/utils/box.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="247">
-                  <caret line="13" column="18" lean-forward="true" selection-start-line="13" selection-start-column="18" selection-end-line="13" selection-end-column="18" />
+                <state relative-caret-position="108">
+                  <caret line="6" selection-start-line="6" selection-end-line="6" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/lib/trace.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="201">
+                  <caret line="90" column="12" selection-start-line="90" selection-start-column="12" selection-end-line="90" selection-end-column="12" />
                   <folding>
-                    <element signature="e#0#12#0" expanded="true" />
+                    <element signature="e#0#29#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
             </entry>
           </file>
           <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/models/backbone/sqeezenet.py">
+            <entry file="file://$PROJECT_DIR$/utils/matching.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="114">
-                  <caret line="6" selection-start-line="6" selection-end-line="21" selection-end-column="16" />
+                <state relative-caret-position="1336">
+                  <caret line="82" lean-forward="true" selection-start-line="82" selection-end-line="82" />
                   <folding>
-                    <element signature="e#0#12#0" expanded="true" />
+                    <element signature="e#0#30#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$USER_HOME$/conda/envs/mot/lib/python3.6/site-packages/numpy/core/shape_base.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="211">
+                  <caret line="411" selection-start-line="411" selection-end-line="411" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$USER_HOME$/conda/envs/mot/lib/python3.6/typing.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="238">
+                  <caret line="678" selection-start-line="678" selection-end-line="678" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/utils/image.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="-18">
+                  <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
+                  <folding>
+                    <element signature="e#0#24#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -262,15 +221,10 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>overlap</find>
-      <find>chi2inv95</find>
-      <find>to_</find>
-      <find>asarray</find>
       <find>logger</find>
       <find>inp_size</find>
       <find>output_channels</find>
       <find>output</find>
-      <find>fromiter</find>
       <find>bbox_utils</find>
       <find>extract_reid_features</find>
       <find>SpatialCrossMapLRN</find>
@@ -280,7 +234,23 @@
       <find>cpu</find>
       <find>module</find>
       <find>gts</find>
+      <find>loading layers</find>
+      <find>print</find>
+      <find>load cls</find>
+      <find>feat_stride</find>
+      <find>feat_</find>
+      <find>crop</find>
+      <find>initialize</find>
+      <find>initi</find>
+      <find>self.motion</find>
+      <find>fromiter</find>
+      <find>lost</find>
+      <find>self.tracker</find>
+      <find>Upsample</find>
+      <find>as F</find>
+      <find>np.stack</find>
       <find>n_feats</find>
+      <find>feats</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -293,30 +263,33 @@
         <option value="$PROJECT_DIR$/xutils/nms.py" />
         <option value="$PROJECT_DIR$/xutils/kalmanfilter.py" />
         <option value="$PROJECT_DIR$/tracker/matching.py" />
-        <option value="$PROJECT_DIR$/lib/trace.py" />
         <option value="$PROJECT_DIR$/xutils/box.py" />
-        <option value="$PROJECT_DIR$/main.py" />
-        <option value="$PROJECT_DIR$/utils/kalmanfilter.py" />
         <option value="$PROJECT_DIR$/models/net_utils.py" />
-        <option value="$PROJECT_DIR$/utils/matching.py" />
         <option value="$PROJECT_DIR$/requirements.txt" />
-        <option value="$PROJECT_DIR$/utils/box.py" />
         <option value="$PROJECT_DIR$/models/reid/__init__.py" />
         <option value="$PROJECT_DIR$/test.py" />
         <option value="$PROJECT_DIR$/xmodels/__init__.py" />
         <option value="$PROJECT_DIR$/xmodels/backbone/__init__.py" />
-        <option value="$PROJECT_DIR$/xmodels/backbone/googlenet.py" />
         <option value="$PROJECT_DIR$/xmodels/backbone/sqeezenet.py" />
-        <option value="$PROJECT_DIR$/utils/image.py" />
         <option value="$PROJECT_DIR$/models/classification/rfcn_cls.py" />
-        <option value="$PROJECT_DIR$/lib/tracker.py" />
         <option value="$PROJECT_DIR$/utils/network.py" />
+        <option value="$PROJECT_DIR$/models/backbone/sqeezenet.py" />
+        <option value="$PROJECT_DIR$/utils/image.py" />
+        <option value="$PROJECT_DIR$/utils/data.py" />
         <option value="$PROJECT_DIR$/xmodels/identifier.py" />
+        <option value="$PROJECT_DIR$/xmodels/backbone/googlenet.py" />
+        <option value="$PROJECT_DIR$/utils/box.py" />
+        <option value="$PROJECT_DIR$/utils/kalmanfilter.py" />
+        <option value="$PROJECT_DIR$/utils/matching.py" />
+        <option value="$PROJECT_DIR$/lib/trace.py" />
+        <option value="$PROJECT_DIR$/main.py" />
+        <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/xmodels/classifier.py" />
+        <option value="$PROJECT_DIR$/lib/tracker.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6" fullScreen="true">
+  <component name="ProjectFrameBounds" extendedState="7" fullScreen="true">
     <option name="x" value="-340" />
     <option name="y" value="-28" />
     <option name="width" value="2578" />
@@ -335,76 +308,6 @@
               <item name="MOT" type="b2602c69:ProjectViewProjectNode" />
               <item name="MOT" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="MOT" type="b2602c69:ProjectViewProjectNode" />
-              <item name="MOT" type="462c0819:PsiDirectoryNode" />
-              <item name="data" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="MOT" type="b2602c69:ProjectViewProjectNode" />
-              <item name="MOT" type="462c0819:PsiDirectoryNode" />
-              <item name="lib" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="MOT" type="b2602c69:ProjectViewProjectNode" />
-              <item name="MOT" type="462c0819:PsiDirectoryNode" />
-              <item name="models" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="MOT" type="b2602c69:ProjectViewProjectNode" />
-              <item name="MOT" type="462c0819:PsiDirectoryNode" />
-              <item name="models" type="462c0819:PsiDirectoryNode" />
-              <item name="backbone" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="MOT" type="b2602c69:ProjectViewProjectNode" />
-              <item name="MOT" type="462c0819:PsiDirectoryNode" />
-              <item name="models" type="462c0819:PsiDirectoryNode" />
-              <item name="classification" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="MOT" type="b2602c69:ProjectViewProjectNode" />
-              <item name="MOT" type="462c0819:PsiDirectoryNode" />
-              <item name="models" type="462c0819:PsiDirectoryNode" />
-              <item name="psroi_pooling" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="MOT" type="b2602c69:ProjectViewProjectNode" />
-              <item name="MOT" type="462c0819:PsiDirectoryNode" />
-              <item name="models" type="462c0819:PsiDirectoryNode" />
-              <item name="psroi_pooling" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="MOT" type="b2602c69:ProjectViewProjectNode" />
-              <item name="MOT" type="462c0819:PsiDirectoryNode" />
-              <item name="models" type="462c0819:PsiDirectoryNode" />
-              <item name="psroi_pooling" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="cuda" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="MOT" type="b2602c69:ProjectViewProjectNode" />
-              <item name="MOT" type="462c0819:PsiDirectoryNode" />
-              <item name="models" type="462c0819:PsiDirectoryNode" />
-              <item name="reid" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="MOT" type="b2602c69:ProjectViewProjectNode" />
-              <item name="MOT" type="462c0819:PsiDirectoryNode" />
-              <item name="utils" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="MOT" type="b2602c69:ProjectViewProjectNode" />
-              <item name="MOT" type="462c0819:PsiDirectoryNode" />
-              <item name="xmodels" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="MOT" type="b2602c69:ProjectViewProjectNode" />
-              <item name="MOT" type="462c0819:PsiDirectoryNode" />
-              <item name="xmodels" type="462c0819:PsiDirectoryNode" />
-              <item name="backbone" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -422,6 +325,11 @@
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
     <property name="two.files.diff.last.used.file" value="$PROJECT_DIR$/tracker/mot_tracker.py" />
   </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/xmodels" />
+    </key>
+  </component>
   <component name="RunDashboard">
     <option name="ruleStates">
       <list>
@@ -434,7 +342,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.test">
+  <component name="RunManager" selected="Python.main">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="MOT" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -449,7 +357,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
-      <option name="PARAMETERS" value="" />
+      <option name="PARAMETERS" value="--dataset $USER_HOME$/datasets/MOT17/train" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -500,33 +408,34 @@
       <workItem from="1553354104812" duration="26000" />
       <workItem from="1553354132951" duration="14000000" />
       <workItem from="1553421609184" duration="30213000" />
+      <workItem from="1553488391800" duration="14495000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="46174000" />
+    <option name="totallyTimeSpent" value="60669000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="2048" height="1152" extended-state="6" />
+    <frame x="0" y="-26" width="1920" height="1106" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49301144" side_tool="true" visible="true" weight="0.073426574" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49301144" side_tool="true" visible="true" weight="0.074252136" />
       <window_info id="Structure" order="1" sideWeight="0.5069886" side_tool="true" weight="0.093406595" />
       <window_info anchor="bottom" id="Docker" order="0" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="1" />
       <window_info anchor="bottom" id="Version Control" order="2" sideWeight="0.4995" weight="0.21291624" />
-      <window_info anchor="bottom" id="Terminal" order="3" />
-      <window_info anchor="bottom" id="Python Console" order="4" sideWeight="0.500999" side_tool="true" weight="0.26320666" />
+      <window_info anchor="bottom" id="Terminal" order="3" weight="0.32991803" />
+      <window_info anchor="bottom" id="Python Console" order="4" sideWeight="0.50213677" side_tool="true" visible="true" weight="0.2930328" />
       <window_info anchor="bottom" id="Event Log" order="5" sideWeight="0.5005" side_tool="true" weight="0.32996973" />
       <window_info anchor="bottom" id="Message" order="6" />
       <window_info anchor="bottom" id="Find" order="7" weight="0.32993513" />
-      <window_info anchor="bottom" id="Run" order="8" sideWeight="0.499001" weight="0.26320666" />
-      <window_info anchor="bottom" id="Debug" order="9" sideWeight="0.498002" weight="0.29379055" />
+      <window_info anchor="bottom" id="Run" order="8" sideWeight="0.499001" weight="0.2612705" />
+      <window_info active="true" anchor="bottom" id="Debug" order="9" sideWeight="0.49786323" visible="true" weight="0.2930328" />
       <window_info anchor="bottom" id="Cvs" order="10" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="11" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="12" />
-      <window_info anchor="right" id="Remote Host" order="0" sideWeight="0.49849397" visible="true" weight="0.1003996" />
-      <window_info anchor="right" id="SciView" order="1" sideWeight="0.49949545" weight="0.1705" />
+      <window_info anchor="right" id="Remote Host" order="0" sideWeight="0.49849397" weight="0.09989316" />
+      <window_info anchor="right" id="SciView" order="1" sideWeight="0.49949545" visible="true" weight="0.17040598" />
       <window_info anchor="right" id="Database" order="2" show_stripe_button="false" sideWeight="0.49949545" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="3" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="4" weight="0.25" />
@@ -546,194 +455,72 @@
           <option name="timeStamp" value="10" />
         </line-breakpoint>
       </breakpoints>
+      <default-breakpoints>
+        <breakpoint type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
     </breakpoint-manager>
-    <watches-manager>
-      <configuration name="PythonConfigurationType">
-        <watch expression="x.shape" language="Python" />
-      </configuration>
-    </watches-manager>
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="watch">
       <expression>
-        <expression-string>x.shape</expression-string>
+        <expression-string>[*target.to_tlwh.tolist(), 1, -1, -1, -1]</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>[*target.to_tlwh.tolist()]</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>target.to_tlwh.tolist()</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>self._update_mat.shape</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>covariance.shape</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>prev[1:]</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>box[1:]</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>type([1,2,3]) is list</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>type(args[0]) is np.ndarray</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>next(iter(args))</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/pymot/pymot.py" />
-    <entry file="file://$USER_HOME$/.PyCharm2018.3/system/remote_sources/290943900/-1220932909/torch/__init__.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/eval_mot.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="17" selection-start-line="17" selection-end-line="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils/nms.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="171">
-          <caret line="10" column="30" selection-start-line="10" selection-start-column="30" selection-end-line="10" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils/kalman_filter.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="171">
-          <caret line="10" column="13" lean-forward="true" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharm2018.3/system/remote_sources/290943900/-1220932909/sklearn/utils/linear_assignment_.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="444">
-          <caret line="52" column="24" selection-start-line="52" selection-start-column="14" selection-end-line="52" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils/bbox.pyx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1881" />
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharm2018.3/system/remote_sources/290943900/-1220932909/numpy/core/numeric.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-145">
-          <caret line="555" column="4" selection-start-line="555" selection-start-column="4" selection-end-line="555" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils/bbox.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="57">
-          <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="17" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tracker/mot_tracker.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6688">
-          <caret line="365" selection-start-line="365" selection-end-line="365" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tracker/track.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="513">
-          <caret line="27" column="28" selection-start-line="27" selection-start-column="20" selection-end-line="27" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tracker/matching.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1596">
-          <caret line="91" selection-start-line="91" selection-end-line="91" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils/motion.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#0#24#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils/kalmanfilter.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="304">
-          <caret line="55" column="14" selection-start-line="55" selection-start-column="14" selection-end-line="55" selection-end-column="14" />
-          <folding>
-            <element signature="e#0#24#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/utility/conda/Lib/site-packages/torch/utils/ffi/__init__.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/trace.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="581">
-          <caret line="75" column="29" selection-start-line="75" selection-start-column="29" selection-end-line="75" selection-end-column="29" />
-          <folding>
-            <element signature="e#0#29#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils/nms.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1254">
-          <caret line="66" column="32" selection-start-line="66" selection-start-column="32" selection-end-line="66" selection-end-column="32" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="380">
-          <caret line="20" lean-forward="true" selection-start-line="20" selection-end-line="20" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils/matching.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="133">
-          <caret line="7" column="21" selection-start-line="7" selection-start-column="18" selection-end-line="7" selection-end-column="21" />
-          <folding>
-            <element signature="e#0#30#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/requirements.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="247">
-          <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils/box.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="497">
-          <caret line="52" column="4" lean-forward="true" selection-start-line="52" selection-start-column="4" selection-end-line="52" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharm2018.3/system/remote_sources/290943900/-1220932909/torchvision/models/inception.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="494">
-          <caret line="53" column="23" selection-start-line="53" selection-start-column="23" selection-end-line="53" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/utility/conda/envs/torch.4/Lib/site-packages/torch/nn/modules/conv.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1043">
-          <caret line="300" selection-start-line="300" selection-end-line="300" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm2018.3/system/remote_sources/290943900/-1220932909/torchvision/models/inception.py" />
+    <entry file="file://C:/utility/conda/envs/torch.4/Lib/site-packages/torch/nn/modules/conv.py" />
     <entry file="file://$PROJECT_DIR$/models/reid/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="266">
@@ -744,16 +531,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="15" column="37" lean-forward="true" selection-start-line="15" selection-start-column="37" selection-end-line="15" selection-end-column="37" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/test.py" />
     <entry file="file://$PROJECT_DIR$/models/reid/image_part_aligned.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="570">
@@ -764,50 +542,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/utility/conda/envs/torch.4/Lib/site-packages/torchvision/models/inception.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="969">
-          <caret line="54" column="31" selection-start-line="54" selection-start-column="31" selection-end-line="54" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/utility/conda/envs/torch.4/Lib/site-packages/torchvision/models/squeezenet.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="785">
-          <caret line="77" column="13" lean-forward="true" selection-start-line="77" selection-start-column="13" selection-end-line="77" selection-end-column="13" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/utility/conda/envs/torch.4/Lib/site-packages/torch/legacy/nn/SpatialCrossMapLRN.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="57">
-          <caret line="5" column="6" selection-start-line="5" selection-start-column="6" selection-end-line="5" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/utility/conda/envs/torch.4/Lib/site-packages/torch/autograd/function.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="170" column="25" selection-start-line="170" selection-start-column="25" selection-end-line="170" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/xmodels/backbone/__init__.py">
+    <entry file="file://C:/utility/conda/envs/torch.4/Lib/site-packages/torchvision/models/inception.py" />
+    <entry file="file://C:/utility/conda/envs/torch.4/Lib/site-packages/torchvision/models/squeezenet.py" />
+    <entry file="file://C:/utility/conda/envs/torch.4/Lib/site-packages/torch/legacy/nn/SpatialCrossMapLRN.py" />
+    <entry file="file://C:/utility/conda/envs/torch.4/Lib/site-packages/torch/autograd/function.py" />
+    <entry file="file://$PROJECT_DIR$/models/backbone/__init__.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/xmodels/__init__.py">
+    <entry file="file://$PROJECT_DIR$/models/__init__.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://C:/utility/conda/envs/torch.4/Lib/site-packages/torch/nn/modules/module.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="483" column="29" selection-start-line="483" selection-start-column="29" selection-end-line="483" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://C:/utility/conda/envs/torch.4/Lib/site-packages/torch/nn/modules/module.py" />
     <entry file="file://$PROJECT_DIR$/models/backbone/googlenet.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="190">
@@ -818,86 +563,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/backbone/lrn.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="247">
-          <caret line="13" column="18" lean-forward="true" selection-start-line="13" selection-start-column="18" selection-end-line="13" selection-end-column="18" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/xmodels/backbone/sqeezenet.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="608">
-          <caret line="32" column="9" lean-forward="true" selection-start-line="32" selection-start-column="9" selection-end-line="32" selection-end-column="9" />
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils/image.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="152">
-          <caret line="8" column="43" lean-forward="true" selection-start-line="8" selection-start-column="43" selection-end-line="8" selection-end-column="43" />
-          <folding>
-            <element signature="e#0#24#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/xmodels/backbone/googlenet.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="7" lean-forward="true" selection-start-column="7" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/tracker.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="380">
-          <caret line="32" column="30" selection-start-line="32" selection-start-column="30" selection-end-line="32" selection-end-column="30" />
-          <folding>
-            <element signature="e#0#37#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils/network.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/net_utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="437">
-          <caret line="29" column="27" selection-start-line="29" selection-start-column="22" selection-end-line="29" selection-end-column="27" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/classification/classifier.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1007">
-          <caret line="53" column="26" lean-forward="true" selection-start-line="53" selection-start-column="26" selection-end-line="53" selection-end-column="26" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/backbone/sqeezenet.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="114">
-          <caret line="6" selection-start-line="6" selection-end-line="21" selection-end-column="16" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/network.py" />
     <entry file="file://$PROJECT_DIR$/models/psroi_pooling/build.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -907,52 +573,278 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/classification/rfcn_cls.py">
+    <entry file="file://$PROJECT_DIR$/models/psroi_pooling/src/cuda/psroi_pooling_kernel.cu">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="152">
-          <caret line="14" column="22" selection-start-line="14" selection-start-column="22" selection-end-line="14" selection-end-column="22" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/xmodels/identifier.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
-          <caret line="21" column="17" selection-start-line="21" selection-start-column="17" selection-end-line="21" selection-end-column="17" />
-          <folding>
-            <element signature="e#1#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/psroi_pooling/src/psroi_pooling_cuda.h">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/psroi_pooling/src/psroi_pooling_cuda.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="456">
-          <caret line="24" column="36" selection-start-line="24" selection-start-column="36" selection-end-line="24" selection-end-column="36" />
+        <state relative-caret-position="1115">
+          <caret line="172" column="18" selection-start-line="172" selection-start-column="18" selection-end-line="172" selection-end-column="18" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/models/psroi_pooling/src/cuda/psroi_pooling_kernel.h">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/psroi_pooling/src/cuda/psroi_pooling_kernel.cu">
+    <entry file="file://$PROJECT_DIR$/models/psroi_pooling/src/psroi_pooling_cuda.h">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/psroi_pooling/src/psroi_pooling_cuda.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="413">
-          <caret line="172" column="18" selection-start-line="172" selection-start-column="18" selection-end-line="172" selection-end-column="18" />
+        <state relative-caret-position="432">
+          <caret line="24" column="36" selection-start-line="24" selection-start-column="36" selection-end-line="24" selection-end-column="36" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/xmodels/classifier.py">
+    <entry file="file://$PROJECT_DIR$/models/backbone/lrn.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1151">
-          <caret line="97" column="9" lean-forward="true" selection-start-line="97" selection-start-column="9" selection-end-line="97" selection-end-column="9" />
+        <state relative-caret-position="234">
+          <caret line="13" column="18" selection-start-line="13" selection-start-column="18" selection-end-line="13" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/backbone/sqeezenet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="576">
+          <caret line="32" column="9" selection-start-line="32" selection-start-column="9" selection-end-line="32" selection-end-column="9" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/conda/envs/mot/lib/python3.6/site-packages/torch/nn/modules/conv.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="166">
+          <caret line="300" column="23" selection-start-line="300" selection-start-column="23" selection-end-line="300" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/results/MOT17-02-DPM.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/results/MOT17-02-FRCNN.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$USER_HOME$/conda/envs/mot/lib/python3.6/site-packages/torch/nn/modules/container.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-590">
+          <caret line="90" selection-start-line="90" selection-end-line="90" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/net_utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="234">
+          <caret line="13" column="44" selection-start-line="13" selection-start-column="44" selection-end-line="13" selection-end-column="44" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/classification/classifier.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="72" selection-start-line="72" selection-end-line="72" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/data.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="512">
+          <caret line="97" column="31" selection-start-line="97" selection-start-column="31" selection-end-line="97" selection-end-column="31" />
+          <folding>
+            <element signature="e#0#30#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/conda/envs/mot/lib/python3.6/site-packages/torch/nn/modules/module.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="230">
+          <caret line="517" selection-start-line="517" selection-end-line="517" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/backbone/googlenet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="396">
+          <caret line="22" column="29" selection-start-line="22" selection-start-column="29" selection-end-line="22" selection-end-column="29" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/conda/envs/mot/lib/python3.6/typing.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="678" selection-start-line="678" selection-end-line="678" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/conda/envs/mot/lib/python3.6/site-packages/torchvision/models/squeezenet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="256">
+          <caret line="93" column="33" selection-start-line="93" selection-start-column="33" selection-end-line="93" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/conda/envs/mot/lib/python3.6/site-packages/numpy/linalg/linalg.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="211">
+          <caret line="200" selection-start-line="200" selection-end-line="200" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/conda/envs/mot/lib/python3.6/site-packages/torch/nn/functional.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="220">
+          <caret line="1893" column="87" selection-start-line="1893" selection-start-column="23" selection-end-line="1893" selection-end-column="87" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/conda/envs/mot/lib/python3.6/site-packages/numpy/core/shape_base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="211">
+          <caret line="411" selection-start-line="411" selection-end-line="411" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/results/MOT17-05-DPM.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/results/MOT17-04-FRCNN.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="23" column="94" selection-start-line="23" selection-start-column="94" selection-end-line="23" selection-end-column="94" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/identifier.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="7" column="21" selection-start-line="7" selection-start-column="21" selection-end-line="7" selection-end-column="21" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="17" selection-start-line="17" selection-end-line="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/classification/rfcn_cls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="211">
+          <caret line="18" column="32" selection-start-line="18" selection-start-column="32" selection-end-line="18" selection-end-column="32" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/results/MOT17-04-SDP.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-129151">
+          <caret line="2" column="47" selection-start-line="2" selection-start-column="47" selection-end-line="2" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/backbone/sqeezenet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="386">
+          <caret line="56" column="22" selection-start-line="56" selection-start-column="22" selection-end-line="56" selection-end-column="22" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/matching.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1336">
+          <caret line="82" lean-forward="true" selection-start-line="82" selection-end-line="82" />
+          <folding>
+            <element signature="e#0#30#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/kalmanfilter.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="211">
+          <caret line="137" selection-start-line="137" selection-end-line="137" />
           <folding>
             <element signature="e#0#24#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/image.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-18">
+          <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
+          <folding>
+            <element signature="e#0#24#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/nms.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-280">
+          <caret line="25" column="24" selection-start-line="25" selection-start-column="24" selection-end-line="25" selection-end-column="24" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/box.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="6" selection-start-line="6" selection-end-line="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/trace.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="201">
+          <caret line="90" column="12" selection-start-line="90" selection-start-column="12" selection-end-line="90" selection-end-column="12" />
+          <folding>
+            <element signature="e#0#29#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/classifier.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="9" column="55" selection-start-line="9" selection-start-column="55" selection-end-line="9" selection-end-column="55" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/tracker.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
+          <folding>
+            <element signature="e#0#37#0" expanded="true" />
           </folding>
         </state>
       </provider>

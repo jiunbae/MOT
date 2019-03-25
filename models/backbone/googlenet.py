@@ -1,10 +1,27 @@
-'''GoogLeNet with PyTorch.'''
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
-from torch.autograd import Variable
+from torch.legacy.nn import SpatialCrossMapLRN
 
-from .lrn import SpatialCrossMapLRN
+
+class SpatialCrossMap(nn.Module):
+    def __init__(self, size, alpha=1e-4, beta=0.75, k=1):
+        super(SpatialCrossMap, self).__init__()
+        self.size = size
+        self.alpha = alpha
+        self.beta = beta
+        self.k = k
+        self.lrn = None
+        self.save_tensor = None
+
+    def forward(self, tensor: torch.Tensor):
+        self.save_tensor = tensor
+        self.lrn = SpatialCrossMapLRN(self.size, self.alpha, self.beta, self.k)
+        self.lrn.type(tensor.type())
+
+        return self.lrn.forward(tensor)
+
+    def backward(self, grad):
+        return self.lrn.backward(self.save_tensor, grad)
 
 
 class Inception(nn.Module):
@@ -60,7 +77,7 @@ class GoogLeNet(nn.Module):
             nn.ReLU(True),
 
             nn.MaxPool2d(3, stride=2, ceil_mode=True),
-            SpatialCrossMapLRN(5),
+            SpatialCrossMap(5),
 
             nn.Conv2d(64, 64, 1),
             nn.ReLU(True),
@@ -68,7 +85,7 @@ class GoogLeNet(nn.Module):
             nn.Conv2d(64, 192, 3, padding=1),
             nn.ReLU(True),
 
-            SpatialCrossMapLRN(5),
+            SpatialCrossMap(5),
             nn.MaxPool2d(3, stride=2, ceil_mode=True),
         )
 

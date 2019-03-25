@@ -1,7 +1,5 @@
-import torch
 import torch.nn as nn
-import torch.nn.functional as F
-from torchvision import models
+from torchvision.models import squeezenet1_1
 
 
 class DilationLayer(nn.Module):
@@ -26,31 +24,29 @@ class FeatExtractorSqueezeNetx16(nn.Module):
     n_feats = [64, 128, 256, 512]
 
     def __init__(self, pretrained=True):
-
         super(FeatExtractorSqueezeNetx16, self).__init__()
-        print("loading layers from squeezenet1_1...")
-        sq = models.squeezenet1_1(pretrained=pretrained)
+        squeeze = squeezenet1_1(pretrained=pretrained)
 
         self.conv1 = nn.Sequential(
-            sq.features[0],
-            sq.features[1],
+            squeeze.features[0],
+            squeeze.features[1],
         )
         self.conv2 = nn.Sequential(
             nn.MaxPool2d(kernel_size=3, stride=2, padding=1),
-            sq.features[3],
-            sq.features[4],
+            squeeze.features[3],
+            squeeze.features[4],
         )
         self.conv3 = nn.Sequential(
             nn.MaxPool2d(kernel_size=3, stride=2, padding=1),
-            sq.features[6],
-            sq.features[7],
+            squeeze.features[6],
+            squeeze.features[7],
         )
         self.conv4 = nn.Sequential(
             nn.MaxPool2d(kernel_size=3, stride=2, padding=1),
-            sq.features[9],
-            sq.features[10],
-            sq.features[11],
-            sq.features[12],
+            squeeze.features[9],
+            squeeze.features[10],
+            squeeze.features[11],
+            squeeze.features[12],
         )
 
         self.conv1[0].padding = (1, 1)

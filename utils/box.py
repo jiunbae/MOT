@@ -9,13 +9,6 @@ def calibrate(box: np.ndarray) \
     return result
 
 
-def calibration(func):
-    def wrapper(box, *args, **kwargs):
-        box = calibrate(box)
-        return func(box, *args, **kwargs)
-    return wrapper
-
-
 def iou(first: np.ndarray, second: np.ndarray) \
         -> np.ndarray:
 

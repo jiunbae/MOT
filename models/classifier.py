@@ -4,9 +4,27 @@ import cv2
 import numpy as np
 import torch
 import torch.nn as nn
-from models.backbone.sqeezenet import FeatExtractorSqueezeNetx16
+import torch.nn.functional as F
+from torchvision.models import squeezenet1_1
+
+from .psroi_pooling.modules.psroi_pool import PSRoIPool
 
 from utils import image as imagelib
+
+
+class Interpolate(nn.Module):
+    def __init__(self, size=None, scale_factor=None, mode='nearest', align_corners=None):
+        super(Interpolate, self).__init__()
+
+        self.size = size
+        self.scale_factor = scale_factor
+        self.mode = mode
+        self.align_corners = align_corners
+        self.interpolate = F.interpolate
+
+    def forward(self, x):
+        return self.interpolate(x, size=self.size, scale_factor=self.scale_factor,
+                                mode=self.mode, align_corners=self.align_corners)
 
 
 class DilationLayer(nn.Module):
@@ -14,8 +32,8 @@ class DilationLayer(nn.Module):
                  kernel_size: int = 3, dilation: int = 1):
         super(DilationLayer, self).__init__()
 
-        self.conv = nn.Conv2d(in_channels=in_channels, out_channels=out_channels,
-                              kernel_size=kernel_size, padding=int((kernel_size - 1) / 2 * dilation), dilation=dilation)
+        self.conv = nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size,
+                              padding=int((kernel_size - 1) / 2 * dilation), dilation=dilation)
         self.relu = nn.ReLU(inplace=True)
 
     def forward(self, x):
@@ -41,8 +59,8 @@ class ConcatTable(nn.Module):
         result = None
 
         for module in self._modules.values():
-            x = module(x)
-            result = x if result is None else result + x
+            out = module(x)
+            result = out if result is None else result + out
 
         return result
 
@@ -51,19 +69,45 @@ class Classifier(nn.Module):
     def __init__(self):
         super(Classifier, self).__init__()
 
+        self.epoch, self.lr = 0, .01
+
         self.scale = 1.
         self.score = None
+        self.stride = 4
+        self.shape = [64, 128, 256, 512]
 
         # Network
-        self.backbone = FeatExtractorSqueezeNetx16
+        squeeze = squeezenet1_1(pretrained=True)
 
+        self.conv1 = nn.Sequential(
+            squeeze.features[0],
+            squeeze.features[1],
+        )
+        self.conv2 = nn.Sequential(
+            nn.MaxPool2d(kernel_size=3, stride=2, padding=1),
+            squeeze.features[3],
+            squeeze.features[4],
+        )
+        self.conv3 = nn.Sequential(
+            nn.MaxPool2d(kernel_size=3, stride=2, padding=1),
+            squeeze.features[6],
+            squeeze.features[7],
+        )
+        self.conv4 = nn.Sequential(
+            nn.MaxPool2d(kernel_size=3, stride=2, padding=1),
+            squeeze.features[9],
+            squeeze.features[10],
+            squeeze.features[11],
+            squeeze.features[12],
+        )
+        self.conv1[0].padding = (1, 1)
         self.stage_0 = nn.Sequential(
             nn.Dropout2d(inplace=True),
-            nn.Conv2d(in_channels=self.backbone.n_feats[-1], out_channels=256, kernel_size=3, padding=1),
+            nn.Conv2d(in_channels=self.shape[-1], out_channels=256, kernel_size=3, padding=1),
             nn.ReLU(inplace=True),
         )
 
-        feature_size = self.backbone.n_feats[1:]
+        feature_size = self.shape[1:]
         in_channels = 256
         out_shape = [128, 256]
         for i in range(1, len(feature_size)):
@@ -73,7 +117,7 @@ class Classifier(nn.Module):
                         nn.Conv2d(in_channels, out_channels, 3, padding=1, bias=True),
                         nn.BatchNorm2d(out_channels),
                         nn.ReLU(inplace=True),
-                        nn.Upsample(scale_factor=2, mode='bilinear', align_corners=False),
+                        Interpolate(scale_factor=2, mode='bilinear', align_corners=False),
                     ))
 
             feat_channels = feature_size[-1-i]
@@ -96,7 +140,7 @@ class Classifier(nn.Module):
 
             nn.Conv2d(in_channels, roi_size * roi_size, 1, padding=1)
         )
-        self.roi_pool = PSRoIPool(roi_size, roi_size, 1. / self.feat_stride, roi_size, 1)
+        self.roi_pool = PSRoIPool(roi_size, roi_size, 1. / self.stride, roi_size, 1)
         self.avg_pool = nn.AvgPool2d(roi_size, roi_size)
 
         # TODO: Check CUDA available
@@ -116,10 +160,15 @@ class Classifier(nn.Module):
         return cropped, padded, shape, scale
 
     def forward(self, x: torch.Tensor):
-        features = self.backbone(x)
+        x2 = self.conv1(x)
+        x4 = self.conv2(x2)
+        x8 = self.conv3(x4)
+        x16 = self.conv4(x8)
+
+        features = [x2, x4, x8, x16]
         inputs = self.stage_0(features[-1])
 
-        for i in range(1, len(self.backbone.n_feats[1:])):
+        for i in range(1, len(self.shape[1:])):
             depth = getattr(self, 'upconv_{}'.format(i))(inputs)
             project = getattr(self, 'proj_{}'.format(i))(features[-1-i])
             inputs = torch.cat((depth, project), 1)
@@ -171,4 +220,6 @@ class Classifier(nn.Module):
             lr = file.attrs.get('lr', -1)
             lr = np.asarray([lr] if lr > 0 else [], dtype=np.float)
 
-            return epoch, lr
+            self.epoch, self.lr = epoch, lr
+
+            return self

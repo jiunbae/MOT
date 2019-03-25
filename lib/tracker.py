@@ -2,9 +2,9 @@ from itertools import chain, compress
 
 import numpy as np
 
-from models.classification.classifier import PatchClassifier
+from models.identifier import Identifier
+from models.classifier import Classifier
 from lib.trace import State, Trace
-from xmodels.identifier import Identifier
 from utils import matching
 from utils.nms import nms
 from utils.kalmanfilter import KalmanFilter
@@ -27,10 +27,11 @@ class Tracker(object):
         self.removed = []
 
         self.motion = KalmanFilter()
-        self.classifier = PatchClassifier()
-        self.identifier = Identifier()
 
-        self.identifier.load()
+        self.identifier = Identifier().load()
+        self.classifier = Classifier().load()
+
+        # self.classifier = PatchClassifier()
 
         self.frame = 0
 
@@ -54,7 +55,7 @@ class Tracker(object):
         detections.extend(map(lambda t: Trace(t.tracking(image), t.track_score, from_det=True),
                               filter(lambda t: t.is_activated, chain(self.tracked, self.lost))))
 
-        rois = np.fromiter(map(lambda t: t.to_tlbr, detections), np.float32)
+        rois = np.asarray(list(map(lambda t: t.to_tlbr, detections)), np.float32)
 
         class_scores = self.classifier.predict(rois)
         scores = np.fromiter(map(lambda t: t.score, detections), np.float)
@@ -69,7 +70,7 @@ class Tracker(object):
             indices = np.zeros_like(detections, dtype=np.bool)
             indices[np.where(mask & (scores >= self.min_score))] = True
 
-            detections = compress(detections, indices)
+            detections = list(compress(detections, indices))
             scores = scores[indices]
 
             for detection, score in zip(detections, scores):
@@ -79,10 +80,10 @@ class Tracker(object):
         detections = list(filter(lambda t: t.from_det, detections))
 
         # set features
-        features = self.identifier.extract(image, np.formiter(map(lambda t: t.to_tlbr, detections), dtype=np.int))
+        features = self.identifier.extract(image, np.asarray(list(map(lambda t: t.to_tlbr, detections)), dtype=np.int))
 
         for idx, detection in enumerate(detections):
-            detection.feature = features[1]
+            detection.feature = features[idx]
 
         # Step3. Association for tracked
         # matching for tracked target
@@ -94,27 +95,27 @@ class Tracker(object):
         matches, u_track, u_detection = matching.assignment(cost, threshold=self.min_dist)
 
         for track, det in matches:
-            tracked[track].update(detections[det], self.frame, image)
+            tracked[track].update(self.frame, image, detections[det])
 
         # matching for missing targets
-        detections = list(map(lambda u: detection[u], u_detection))
+        detections = list(map(lambda u: detections[u], u_detection))
         distance = matching.nearest_distance(self.lost, detections, metric='euclidean')
         cost = matching.gate_cost(self.motion, distance, self.lost, detections)
         matches, u_lost, u_detection = matching.assignment(cost, threshold=self.min_dist)
 
-        for lost, det in matches:
-            self.lost[lost].reactivate(detections[det], self.frame, image, reassign=not self.use_refind)
-            refind.append(self.lost[lost])
+        for miss, det in matches:
+            self.lost[miss].reactivate(self.frame, image, detections[det], reassign=not self.use_refind)
+            refind.append(self.lost[miss])
 
         # remaining tracked
         matched_size = len(u_detection)
-        detections = list(map(lambda u: detection[u], u_detection)) + predictions
+        detections = list(map(lambda u: detections[u], u_detection)) + predictions
         u_tracked = list(map(lambda u: tracked[u], u_track))
         distance = matching.iou_distance(u_tracked, detections)
         matches, u_track, u_detection = matching.assignment(distance, threshold=.8)
 
         for track, det in matches:
-            u_tracked[track].update(detections[det], self.frame, image, update_feature=True)
+            u_tracked[track].update(self.frame, image, detections[det], update_feature=True)
 
         for track in map(lambda u: u_tracked[u], u_track):
             track.lost()
@@ -126,7 +127,7 @@ class Tracker(object):
         matches, u_unconfirmed, u_detection = matching.assignment(distance, threshold=.8)
 
         for track, det in matches:
-            unconfirmed[track].update(detections[det], self.frame, image, update_feature=True)
+            unconfirmed[track].update(self.frame, image, detections[det], update_feature=True)
 
         for track in map(lambda u: unconfirmed[u], u_unconfirmed):
             track.remove()
@@ -154,7 +155,7 @@ class Tracker(object):
         self.removed.extend(removed)
 
         lost_score = self.classifier.predict(
-            np.fromiter(map(lambda t: t.to_tlbr, self.lost), dtype=np.float32)
+            np.asarray(list(map(lambda t: t.to_tlbr, self.lost)), dtype=np.float32)
         )
 
         return chain(

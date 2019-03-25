@@ -43,7 +43,7 @@ def nearest_distance(tracks: list, detections: list, metric='cosine') \
     cost = np.zeros((len(tracks), len(detections)), dtype=np.float32)
 
     if cost.size:
-        features = np.fromiter(map(lambda t: t.feature_current, detections), dtype=np.float32)
+        features = np.stack(map(lambda t: t.feature_current, detections)).astype(np.float64)
         for index, track in enumerate(tracks):
             cost[index, :] = np.maximum(0.0, cdist(track.features, features, metric).min(axis=0))
 
@@ -67,13 +67,13 @@ def gate_cost(motion, cost: np.ndarray,
     if cost.size:
         dimension = 2 if only_position else 4
         threshold = motion.threshold[dimension]
-        measurements = np.fromiter(map(lambda d: d.to_tlwh, detections))
+        measurements = np.stack(list(map(lambda d: box.calibrate(d.to_tlwh), detections)))
 
         for index, track in enumerate(tracks):
             distance = motion.gating_distance(
                 measurements,
                 track.mean,
-                track.conv,
+                track.cov,
                 only_position
             )
             cost[index, distance > threshold] = np.inf
@@ -93,5 +93,5 @@ def assignment(cost: np.ndarray, threshold: float, epsilon: float = 1e-4) \
     matches = indices[cost[tuple(zip(*indices))] <= threshold]
 
     return matches, \
-           tuple(set(range(np.size(cost, 0)) - set(matches[:, 0]))), \
-           tuple(set(range(np.size(cost, 1)) - set(matches[:, 1])))
+           tuple(set(range(np.size(cost, 0))) - set(matches[:, 0])), \
+           tuple(set(range(np.size(cost, 1))) - set(matches[:, 1]))
