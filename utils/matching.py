@@ -43,7 +43,7 @@ def nearest_distance(tracks: list, detections: list, metric='cosine') \
     cost = np.zeros((len(tracks), len(detections)), dtype=np.float32)
 
     if cost.size:
-        features = np.stack(map(lambda t: t.feature_current, detections)).astype(np.float64)
+        features = np.asarray(list(map(lambda t: t.feature_current, detections)), dtype=np.float64)
         for index, track in enumerate(tracks):
             cost[index, :] = np.maximum(0.0, cdist(track.features, features, metric).min(axis=0))
 

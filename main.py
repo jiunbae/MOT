@@ -15,7 +15,7 @@ def main(args: argparse.Namespace):
     with tqdm(total=len(list(dataset.iterdir()))) as t:
         for sequence in dataset.iterdir():
 
-            t.set_description(str(sequence))
+            t.set_description(sequence.stem)
 
             tracker = Tracker()
             loader = Dataset(str(sequence), MOT)
