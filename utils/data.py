@@ -71,7 +71,7 @@ class MOT(BaseLoader):
         image = self.images[idx]
         index = int(image.stem)
 
-        gt, det = np.zeros(6), np.zeros(7)
+        gt, det = np.zeros((1, 6)), np.zeros((1, 7))
 
         if self.gt is not None:
             gt = self.gt[self.gt[:, 0] == index]
