@@ -1,3 +1,4 @@
+from typing import Iterable
 from itertools import chain, compress
 
 import numpy as np
@@ -5,7 +6,7 @@ import numpy as np
 from models.identifier import Identifier
 from models.classifier import Classifier
 from lib.trace import State, Trace
-from utils import matching
+from lib import matching
 from utils.nms import nms
 from utils.kalmanfilter import KalmanFilter
 
@@ -33,7 +34,8 @@ class Tracker(object):
 
         self.frame = 0
 
-    def update(self, image: np.ndarray, boxes: np.ndarray, scores: np.ndarray):
+    def update(self, image: np.ndarray, boxes: np.ndarray, scores: np.ndarray) \
+            -> Iterable[Trace]:
         self.frame += 1
 
         refind, lost = [], []
@@ -46,7 +48,10 @@ class Tracker(object):
         if scores is None:
             scores = np.ones(np.size(boxes, 0), dtype=float)
 
-        detections = [Trace(box, score, from_det=True) for box, score in zip(boxes, scores)]
+        detections = list(chain(
+            map(lambda t: Trace(*t, from_det=True), zip(boxes, scores)),
+            map(lambda t: Trace(*t, from_det=False), zip(boxes, scores))
+        ))
 
         self.classifier.update(image)
 
