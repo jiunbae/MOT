@@ -5,9 +5,11 @@ scipy
 opencv-python
 cffi
 sklearn
+scikit-image
 fire
 numba
 scipy
 tqdm
 torch
 torchvision
+pandas
