@@ -53,7 +53,7 @@ class MOT(BaseLoader):
         img_dir = self.sequence.get('imDir', 'img1')
         img_ext = self.sequence.get('imExt', '.jpg')
 
-        self.images = list(self.root.joinpath(img_dir).glob('*' + img_ext))
+        self.images = list(sorted(self.root.joinpath(img_dir).glob('*' + img_ext)))
 
         self.det, self.gt = None, None
 

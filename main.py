@@ -4,7 +4,7 @@ from pathlib import Path
 from tqdm import tqdm
 
 from lib.tracker import Tracker
-from utils.data import Dataset, MOT
+from utils import init, data
 
 
 def main(args: argparse.Namespace):
@@ -18,7 +18,7 @@ def main(args: argparse.Namespace):
             t.set_description(sequence.stem)
 
             tracker = Tracker()
-            loader = Dataset(str(sequence), MOT)
+            loader = data.Dataset(str(sequence), data.MOT)
 
             with open(str(dest.joinpath('{}.txt'.format(sequence.stem))), 'w') as file:
                 for frame, (image, gt_boxes, gt_ids, det_boxes, det_scores) in enumerate(tqdm(loader)):
@@ -34,7 +34,11 @@ if __name__ == '__main__':
                         help="train data path")
     parser.add_argument("--dest", dest='dest', type=str, default='./results',
                         help="result destination")
+    parser.add_argument("--seed", type=int, default=42,
+                        help="Manual seed")
 
     arguments = parser.parse_args()
+
+    init(arguments.seed)
 
     main(arguments)
