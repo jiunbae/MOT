@@ -73,10 +73,10 @@ class MOT(BaseLoader):
 
         gt, det = np.zeros(6), np.zeros(7)
 
-        if self.gt is None:
+        if self.gt is not None:
             gt = self.gt[self.gt[:, 0] == index]
 
-        if self.det is None:
+        if self.det is not None:
             det = self.det[self.det[:, 0] == index]
 
         return str(image), gt[:, 2:6], gt[:, 1], det[:, 2:6], det[:, 6]
