@@ -37,6 +37,9 @@ class BaseLoader:
 
 
 class MOT(BaseLoader):
+    GT = 'gt/gt.txt'
+    DET = 'det/det.txt'
+
     def __init__(self, root_dir: str):
         super().__init__(root_dir)
         self.root = Path(root_dir)
@@ -52,8 +55,13 @@ class MOT(BaseLoader):
 
         self.images = list(self.root.joinpath(img_dir).glob('*' + img_ext))
 
-        self.gt = pd.read_csv(str(self.root.joinpath('gt/gt.txt')), header=None).values
-        self.det = pd.read_csv(str(self.root.joinpath('det/det.txt')), header=None).values
+        self.det, self.gt = None, None
+
+        if self.root.joinpath(self.GT).is_file():
+            self.gt = pd.read_csv(str(self.root.joinpath(self.GT)), header=None).values
+
+        if self.root.joinpath(self.DET).is_file():
+            self.det = pd.read_csv(str(self.root.joinpath(self.DET)), header=None).values
 
     def __len__(self):
         return int(self.sequence.get('seqLength', 0))
@@ -63,10 +71,15 @@ class MOT(BaseLoader):
         image = self.images[idx]
         index = int(image.stem)
 
-        gt = self.gt[self.gt[:, 0] == index]
-        det = self.det[self.det[:, 0] == index]
+        gt, det = np.zeros(6), np.zeros(7)
 
-        return str(image), gt[:, 2:], gt[:, 1], det[:, 2:6], det[:, 6]
+        if self.gt:
+            gt = self.gt[self.gt[:, 0] == index]
+
+        if self.det:
+            det = self.det[self.det[:, 0] == index]
+
+        return str(image), gt[:, 2:6], gt[:, 1], det[:, 2:6], det[:, 6]
 
 
 class Dataset(data.Dataset):

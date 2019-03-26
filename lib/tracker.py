@@ -31,8 +31,6 @@ class Tracker(object):
         self.identifier = Identifier().load()
         self.classifier = Classifier().load()
 
-        # self.classifier = PatchClassifier()
-
         self.frame = 0
 
     def update(self, image: np.ndarray, boxes: np.ndarray, scores: np.ndarray):
