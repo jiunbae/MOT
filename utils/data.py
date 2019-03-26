@@ -104,8 +104,9 @@ class Dataset(data.Dataset):
 
     def __next__(self):
         try:
+            result = self[self.index]
             self.index += 1
-            return self[self.index]
+            return result
         except IndexError:
             self.index = 0
             raise StopIteration
@@ -113,4 +114,4 @@ class Dataset(data.Dataset):
     def __getitem__(self, idx):
         image, *data = self.loader[idx]
 
-        return (skimage.io.imread(image), *data)
+        return (skimage.io.imread(image)[:, :, ::-1], *data)
