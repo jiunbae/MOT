@@ -50,10 +50,9 @@ class Identifier(nn.Module):
         weights = torch.sigmoid(self.branch(feature))
 
         features = list(
-            map(lambda i:
-                getattr(self, 'linear{}'.format(i + 1))(
-                    self.forward_handler(feature, weights[:, i])
-                ), range(self.parts))
+            map(lambda i: getattr(self, 'linear{}'.format(i + 1))(
+                self.forward_handler(feature, weights[:, i])
+            ), range(self.parts))
         )
 
         concat = torch.cat(features, 1)
@@ -72,13 +71,15 @@ class Identifier(nn.Module):
 
         patches = map(lambda b: image[b[1]:b[3], b[0]:b[2]], boxes)
         patches = map(lambda p: self.transform(cv2.resize(p, self.shape)), patches)
+        patches = np.asarray(list(patches), dtype=np.float64)
 
         with torch.no_grad():
             # TODO: Check CUDA available
-            var = torch.autograd.Variable(
-                torch.from_numpy(np.asarray(list(patches), dtype=np.float32))
-            ).cuda()
-            result = self(var)
+            result = self(
+                torch.autograd.Variable(
+                    torch.from_numpy(patches)
+                ).cuda()
+            )
 
         return result.data.cpu().numpy()
 

@@ -3,66 +3,13 @@ from typing import Tuple
 import cv2
 import numpy as np
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
 from torchvision.models import squeezenet1_1
 
-from .psroi_pooling.modules.psroi_pool import PSRoIPool
+# from .psroi_pooling.modules.psroi_pool import PSRoIPool
+from .prroi_pooling.psroi_pool import PrRoIPool2D
 
 from utils import image as imagelib
-
-
-class Interpolate(nn.Module):
-    def __init__(self, size=None, scale_factor=None, mode='nearest', align_corners=None):
-        super(Interpolate, self).__init__()
-
-        self.size = size
-        self.scale_factor = scale_factor
-        self.mode = mode
-        self.align_corners = align_corners
-        self.interpolate = F.interpolate
-
-    def forward(self, x):
-        return self.interpolate(x, size=self.size, scale_factor=self.scale_factor,
-                                mode=self.mode, align_corners=self.align_corners)
-
-
-class DilationLayer(nn.Module):
-    def __init__(self, in_channels, out_channels,
-                 kernel_size: int = 3, dilation: int = 1):
-        super(DilationLayer, self).__init__()
-
-        self.conv = nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size,
-                              padding=int((kernel_size - 1) / 2 * dilation), dilation=dilation)
-        self.relu = nn.ReLU(inplace=True)
-
-    def forward(self, x):
-        x = self.conv(x)
-        x = self.relu(x)
-        return x
-
-
-class ConcatTable(nn.Module):
-    def __init__(self, *args):
-        super(ConcatTable, self).__init__()
-
-        for i, module in enumerate(args):
-            self.add_module(str(i), module)
-
-    def __getitem__(self, idx: int):
-        it = iter(self._modules.values())
-        for i in range(idx):
-            next(it)
-        return next(it)
-
-    def forward(self, x: torch.Tensor):
-        result = None
-
-        for module in self._modules.values():
-            out = module(x)
-            result = out if result is None else result + out
-
-        return result
+from utils.network import *
 
 
 class Classifier(nn.Module):
@@ -140,7 +87,8 @@ class Classifier(nn.Module):
 
             nn.Conv2d(in_channels, roi_size * roi_size, 1, padding=1)
         )
-        self.roi_pool = PSRoIPool(roi_size, roi_size, 1. / self.stride, roi_size, 1)
+        # self.roi_pool = PSRoIPool(roi_size, roi_size, 1. / self.stride, roi_size, 1)
+        self.roi_pool = PrRoIPool2D(roi_size, roi_size, 1. / self.stride)
         self.avg_pool = nn.AvgPool2d(roi_size, roi_size)
 
         # TODO: Check CUDA available
@@ -169,9 +117,10 @@ class Classifier(nn.Module):
         inputs = self.stage_0(features[-1])
 
         for i in range(1, len(self.shape[1:])):
-            depth = getattr(self, 'upconv_{}'.format(i))(inputs)
-            project = getattr(self, 'proj_{}'.format(i))(features[-1-i])
-            inputs = torch.cat((depth, project), 1)
+            inputs = torch.cat((
+                getattr(self, 'upconv_{}'.format(i))(inputs),           # depth
+                getattr(self, 'proj_{}'.format(i))(features[-1 - i]),   # project
+            ), 1)
 
         return self.cls_conv(inputs)
 
@@ -181,10 +130,11 @@ class Classifier(nn.Module):
         self.scale = scale
 
         with torch.no_grad():
-            var = torch.autograd.Variable(
-                torch.from_numpy(cropped).permute(2, 0, 1).unsqueeze(0)
-            ).cuda()
-            self.score = self(var)
+            self.score = self(
+                torch.autograd.Variable(
+                    torch.from_numpy(cropped).permute(2, 0, 1).unsqueeze(0)
+                ).cuda()
+            )
 
         return shape, scale
 
@@ -197,7 +147,10 @@ class Classifier(nn.Module):
 
         updated = torch.autograd.Variable(
             torch.from_numpy(
-                np.hstack((np.zeros((np.size(rois, 0), 1), dtype=np.float32), rois))
+                np.hstack((
+                    np.zeros((np.size(rois, 0), 1), dtype=np.float32),
+                    rois
+                ))
             )
         ).cuda()
 

@@ -5,8 +5,7 @@ import numpy as np
 
 from models.identifier import Identifier
 from models.classifier import Classifier
-from lib.trace import State, Trace
-from lib import matching
+from lib import trace, matching
 from utils.nms import nms
 from utils.kalmanfilter import KalmanFilter
 
@@ -35,7 +34,7 @@ class Tracker(object):
         self.frame = 0
 
     def update(self, image: np.ndarray, boxes: np.ndarray, scores: np.ndarray) \
-            -> Iterable[Trace]:
+            -> Iterable[trace.Trace]:
         self.frame += 1
 
         refind, lost = [], []
@@ -49,13 +48,13 @@ class Tracker(object):
             scores = np.ones(np.size(boxes, 0), dtype=float)
 
         detections = list(chain(
-            map(lambda t: Trace(*t, from_det=True), zip(boxes, scores)),
-            map(lambda t: Trace(*t, from_det=False), zip(boxes, scores))
+            map(lambda t: trace.Trace(*t, from_det=True), zip(boxes, scores)),
+            map(lambda t: trace.Trace(*t, from_det=False), zip(boxes, scores))
         ))
 
         self.classifier.update(image)
 
-        detections.extend(map(lambda t: Trace(t.tracking(image), t.track_score, from_det=True),
+        detections.extend(map(lambda t: trace.Trace(t.tracking(image), t.track_score, from_det=True),
                               filter(lambda t: t.is_activated, chain(self.tracked, self.lost))))
 
         rois = np.asarray(list(map(lambda t: t.to_tlbr, detections)), np.float32)
@@ -149,11 +148,11 @@ class Tracker(object):
             removed.append(track)
 
         self.tracked = list(chain(
-            filter(lambda t: t.state == State.Tracked, self.tracked),
+            filter(lambda t: t.state == trace.State.Tracked, self.tracked),
             activated, refind,
         ))
         self.lost = list(chain(
-            filter(lambda t: t.state == State.Lost, self.lost),
+            filter(lambda t: t.state == trace.State.Lost, self.lost),
             lost
         ))
         self.removed.extend(removed)
