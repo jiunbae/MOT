@@ -155,7 +155,7 @@ class Classifier(nn.Module):
         ).cuda()
 
         scores = self.roi_pool(self.score, updated)
-        scores = torch.mean(scores, dim=1, keepdim=True)
+        scores = torch.mean(scores, dim=(1,), keepdim=True)
         scores = self.avg_pool(scores).view(-1)
 
         return torch.sigmoid(scores).data.cpu().numpy()
