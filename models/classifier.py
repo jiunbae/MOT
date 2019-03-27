@@ -6,7 +6,7 @@ import torch
 from torchvision.models import squeezenet1_1
 
 # from .psroi_pooling.modules.psroi_pool import PSRoIPool
-from .prroi_pooling.psroi_pool import PrRoIPool2D
+from .prroi_pooling.prroi_pool import PrRoIPool2D
 
 from utils import image as imagelib
 from utils.network import *
@@ -132,7 +132,7 @@ class Classifier(nn.Module):
         with torch.no_grad():
             self.score = self(
                 torch.autograd.Variable(
-                    torch.from_numpy(cropped).permute(2, 0, 1).unsqueeze(0)
+                    torch.from_numpy(cropped.astype(np.float32)).permute(2, 0, 1).unsqueeze(0)
                 ).cuda()
             )
 
@@ -149,12 +149,13 @@ class Classifier(nn.Module):
             torch.from_numpy(
                 np.hstack((
                     np.zeros((np.size(rois, 0), 1), dtype=np.float32),
-                    rois
+                    rois.astype(np.float32),
                 ))
             )
         ).cuda()
 
         scores = self.roi_pool(self.score, updated)
+        scores = torch.mean(scores, dim=1, keepdim=True)
         scores = self.avg_pool(scores).view(-1)
 
         return torch.sigmoid(scores).data.cpu().numpy()

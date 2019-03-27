@@ -71,7 +71,7 @@ class Identifier(nn.Module):
 
         patches = map(lambda b: image[b[1]:b[3], b[0]:b[2]], boxes)
         patches = map(lambda p: self.transform(cv2.resize(p, self.shape)), patches)
-        patches = np.asarray(list(patches), dtype=np.float64)
+        patches = np.asarray(list(patches), dtype=np.float32)
 
         with torch.no_grad():
             # TODO: Check CUDA available

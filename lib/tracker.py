@@ -61,8 +61,8 @@ class Tracker(object):
 
         class_scores = self.classifier.predict(rois)
         scores = np.concatenate([
-            np.ones(np.size(boxes, 0), dtype=np.float64),
-            np.fromiter(map(lambda t: t.score, detections[np.size(boxes, 0):]), dtype=np.float64)
+            np.ones(np.size(boxes, 0), dtype=np.float32),
+            np.fromiter(map(lambda t: t.score, detections[np.size(boxes, 0):]), dtype=np.float32)
         ]) * class_scores
 
         # Non-maxima suppression
@@ -83,7 +83,9 @@ class Tracker(object):
         detections = list(filter(lambda t: t.from_det, detections))
 
         # set features
-        features = self.identifier.extract(image, np.asarray(list(map(lambda t: t.to_tlbr, detections)), dtype=np.float32))
+        features = self.identifier.extract(image, np.asarray(
+            list(map(lambda t: t.to_tlbr, detections)), dtype=np.float32)
+        )
 
         for idx, detection in enumerate(detections):
             detection.feature = features[idx]
