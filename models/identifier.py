@@ -23,7 +23,7 @@ class Identifier(nn.Module):
 
         # Network
         for i in range(self.parts):
-            setattr(self, 'linear_feature{}'.format(i + 1), nn.Linear(512, 64))
+            setattr(self, 'linear{}'.format(i + 1), nn.Linear(512, 64))
 
         # TODO: Check CUDA available
         self.cuda()
@@ -51,7 +51,7 @@ class Identifier(nn.Module):
 
         features = list(
             map(lambda i:
-                getattr(self, 'linear_feature{}'.format(i + 1))(
+                getattr(self, 'linear{}'.format(i + 1))(
                     self.forward_handler(feature, weights[:, i])
                 ), range(self.parts))
         )
@@ -83,11 +83,20 @@ class Identifier(nn.Module):
         return result.data.cpu().numpy()
 
     def load(self, weights: str = 'data/googlenet_part8_all_xavier_ckpt_56.h5'):
+
+        # TODO: Remove this part after change weights
+        def _wrapper_(key: str) \
+                -> str:
+            return key.replace('backbone', 'feat_conv')\
+                .replace('bridge', 'conv_input_feat')\
+                .replace('branch', 'conv_att')\
+                .replace('linear', 'linear_feature')
+
         import h5py
         with h5py.File(weights, mode='r') as file:
 
-            for k, v in filter(lambda kv: kv[0] in file, self.state_dict().items()):
-                param = torch.from_numpy(np.asarray(file[k]))
+            for k, v in filter(lambda kv: _wrapper_(kv[0]) in file, self.state_dict().items()):
+                param = torch.from_numpy(np.asarray(file[_wrapper_(k)]))
                 if v.size() == param.size():
                     v.copy_(param)
 

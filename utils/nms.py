@@ -1,20 +1,46 @@
+from typing import Iterator
+
 import numpy as np
 import torch
 
 
-def nms(boxes: np.ndarray, scores: np.ndarray,
-        overlap: float = .5, top: int = 0) \
-        -> np.ndarray:
+def nms(detections: np.ndarray, scores: np.ndarray, threshold: float = .5) \
+        -> Iterator[int]:
     """Apply non-maximum suppression
 
-    Args:
-        boxes: (tensor, (num, 4)) The location predictions for the image.
+    Arguments:
+        detections: (tensor, (num, 4)) The location predictions for the image.
         scores: (tensor, (num)) The class prediction scores for the image.
-        overlap: (float) The overlap thresh for suppressing unnecessary boxes.
-        top: (int) The Maximum number of box predictions to consider. (0 is unlimited)
+        threshold: (float) The overlap thresh for suppressing unnecessary boxes.
     Return:
         The indices of the kept boxes with respect to num.
     """
+    x1, x2 = detections[:, 0], detections[:, 2]
+    y1, y2 = detections[:, 1], detections[:, 3]
+
+    areas = (x2 - x1 + 1) * (y2 - y1 + 1)
+    order = scores.argsort()[::-1]
+
+    while order.size > 0:
+        i = order[0]
+
+        yield i
+
+        xx1, xx2 = np.maximum(x1[i], x1[order[1:]]), np.minimum(x2[i], x2[order[1:]])
+        yy1, yy2 = np.maximum(y1[i], y1[order[1:]]), np.minimum(y2[i], y2[order[1:]])
+
+        w = np.maximum(0.0, xx2 - xx1 + 1)
+        h = np.maximum(0.0, yy2 - yy1 + 1)
+
+        inter = w * h
+        overlap = inter / (areas[i] + areas[order[1:]] - inter)
+
+        order = order[np.where(overlap <= threshold)[0] + 1]
+
+
+def torch_nms(boxes: np.ndarray, scores: np.ndarray,
+        overlap: float = .5, top: int = 0) \
+        -> np.ndarray:
     boxes = torch.from_numpy(boxes)
     scores = torch.from_numpy(scores)
 

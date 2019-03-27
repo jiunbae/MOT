@@ -61,14 +61,15 @@ class Tracker(object):
         rois = np.asarray(list(map(lambda t: t.to_tlbr, detections)), np.float32)
 
         class_scores = self.classifier.predict(rois)
-        scores = np.fromiter(map(lambda t: t.score, detections), np.float)
-        scores[0:np.size(boxes, 0)] = 1.
-        scores = scores * class_scores
+        scores = np.concatenate([
+            np.ones(np.size(boxes, 0), dtype=np.float64),
+            np.fromiter(map(lambda t: t.score, detections[:np.size(boxes, 0)]), dtype=np.float64)
+        ]) * class_scores
 
         # Non-maxima suppression
         if len(detections) > 0:
             mask = np.zeros(np.size(rois, 0), dtype=np.bool)
-            mask[nms(rois, scores.reshape(-1), overlap=.4)] = True
+            mask[list(nms(rois, scores.reshape(-1), threshold=.4))] = True
 
             indices = np.zeros_like(detections, dtype=np.bool)
             indices[np.where(mask & (scores >= self.min_score))] = True
@@ -83,7 +84,7 @@ class Tracker(object):
         detections = list(filter(lambda t: t.from_det, detections))
 
         # set features
-        features = self.identifier.extract(image, np.asarray(list(map(lambda t: t.to_tlbr, detections)), dtype=np.int))
+        features = self.identifier.extract(image, np.asarray(list(map(lambda t: t.to_tlbr, detections)), dtype=np.float32))
 
         for idx, detection in enumerate(detections):
             detection.feature = features[idx]
@@ -91,7 +92,7 @@ class Tracker(object):
         # Step3. Association for tracked
         # matching for tracked target
         unconfirmed = list(filter(lambda t: not t.is_activated, self.tracked))
-        tracked = list(filter(lambda t: t.from_det, self.tracked))
+        tracked = list(filter(lambda t: t.is_activated, self.tracked))
 
         distance = matching.nearest_distance(tracked, detections, metric='euclidean')
         cost = matching.gate_cost(self.motion, distance, tracked, detections)

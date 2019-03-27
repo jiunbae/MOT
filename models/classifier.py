@@ -207,11 +207,19 @@ class Classifier(nn.Module):
         return torch.sigmoid(scores).data.cpu().numpy()
 
     def load(self, weights: str = 'data/squeezenet_small40_coco_mot16_ckpt_10.h5'):
+
+        # TODO: Remove this part after change weights
+        def _wrapper_(key: str) \
+                -> str:
+            if key.startswith('conv'):
+                return 'feature_extractor.' + key
+            return key.replace('.conv.', '.Dconv.')
+
         import h5py
         with h5py.File(weights, mode='r') as file:
 
-            for k, v in filter(lambda kv: kv[0] in file, self.state_dict().items()):
-                param = torch.from_numpy(np.asarray(file[k]))
+            for k, v in filter(lambda kv: _wrapper_(kv[0]) in file, self.state_dict().items()):
+                param = torch.from_numpy(np.asarray(file[_wrapper_(k)]))
                 if v.size() == param.size():
                     v.copy_(param)
 
