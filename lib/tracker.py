@@ -63,7 +63,7 @@ class Tracker(object):
         class_scores = self.classifier.predict(rois)
         scores = np.concatenate([
             np.ones(np.size(boxes, 0), dtype=np.float64),
-            np.fromiter(map(lambda t: t.score, detections[:np.size(boxes, 0)]), dtype=np.float64)
+            np.fromiter(map(lambda t: t.score, detections[np.size(boxes, 0):]), dtype=np.float64)
         ]) * class_scores
 
         # Non-maxima suppression
