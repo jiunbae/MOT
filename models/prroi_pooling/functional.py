@@ -6,9 +6,10 @@ try:
     from torch.utils.cpp_extension import load as load_extension
     root_dir = pjoin(dirname(__file__), 'src')
     _prroi_pooling = load_extension(
-        '_prroi_pooling',
-        [pjoin(root_dir, 'prroi_pooling_gpu.c'), pjoin(root_dir, 'prroi_pooling_gpu_impl.cu')],
-        verbose=True
+        '_prroi_pooling', [
+            pjoin(root_dir, 'prroi_pooling_gpu.c'),
+            pjoin(root_dir, 'prroi_pooling_gpu_impl.cu')
+        ],
     )
 except ImportError:
     raise ImportError('Can not compile Precise RoI Pooling library.')
@@ -19,7 +20,7 @@ __all__ = ['prroi_pool2d']
 class PrRoIPool2DFunction(torch.autograd.Function):
     @staticmethod
     def forward(ctx, features, rois, pooled_height, pooled_width, spatial_scale):
-        assert 'FloatTensor' in features.type() and 'FloatTensor' in rois.type(), \
+        assert isinstance(features, torch.cuda.FloatTensor) or isinstance(rois, torch.cuda.FloatTensor), \
                 'Precise RoI Pooling only takes float input, got {} for features and {} for rois.'.format(features.type(), rois.type())
 
         pooled_height = int(pooled_height)
@@ -28,12 +29,12 @@ class PrRoIPool2DFunction(torch.autograd.Function):
 
         features = features.contiguous()
         rois = rois.contiguous()
+
         params = (pooled_height, pooled_width, spatial_scale)
 
         if features.is_cuda:
             output = _prroi_pooling.prroi_pooling_forward_cuda(features, rois, *params)
             ctx.params = params
-            # everything here is contiguous.
             ctx.save_for_backward(features, rois, output)
         else:
             raise NotImplementedError('Precise RoI Pooling only supports GPU (cuda) implememtations.')

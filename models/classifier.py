@@ -5,8 +5,8 @@ import numpy as np
 import torch
 from torchvision.models import squeezenet1_1
 
-# from .psroi_pooling.modules.psroi_pool import PSRoIPool
-from .prroi_pooling.prroi_pool import PrRoIPool2D
+# from .prroi_pooling.prroi_pool import PrRoIPool2D as Pool
+from .psroi_pooling.psroi_pool import PsRoIPool2D as Pool
 
 from utils import image as imagelib
 from utils.network import *
@@ -87,8 +87,8 @@ class Classifier(nn.Module):
 
             nn.Conv2d(in_channels, roi_size * roi_size, 1, padding=1)
         )
-        # self.roi_pool = PSRoIPool(roi_size, roi_size, 1. / self.stride, roi_size, 1)
-        self.roi_pool = PrRoIPool2D(roi_size, roi_size, 1. / self.stride)
+
+        self.roi_pool = Pool(roi_size, roi_size, 1. / self.stride)
         self.avg_pool = nn.AvgPool2d(roi_size, roi_size)
 
         # TODO: Check CUDA available
