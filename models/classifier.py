@@ -2,10 +2,8 @@ from typing import Tuple
 
 import cv2
 import numpy as np
-import torch
 from torchvision.models import squeezenet1_1
 
-# from .prroi_pooling.prroi_pool import PrRoIPool2D as Pool
 from .psroi_pooling.psroi_pool import PsRoIPool2D as Pool
 
 from utils import image as imagelib
