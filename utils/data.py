@@ -79,7 +79,47 @@ class MOT(BaseLoader):
         if self.det is not None:
             det = self.det[self.det[:, 0] == index]
 
-        return str(image), gt[:, 2:6], gt[:, 1], det[:, 2:6], det[:, 6]
+        return str(image), det[:, 2:6], det[:, 6], gt[:, 2:6], gt[:, 1],
+
+
+class KITTI(BaseLoader):
+    GT = '../../label_02/{}.txt'
+
+    def __init__(self, root_dir: str):
+        super().__init__(root_dir)
+        self.root = Path(root_dir)
+        self.sequence = self.root.stem
+
+        self.images = list(sorted(self.root.glob('*.png')))
+
+        self.gt = None
+
+        gt_file = self.root.joinpath(self.GT.format(self.sequence))
+
+        if gt_file.is_file():
+            df = pd.read_csv(str(gt_file), header=None, sep=' ')
+            sub = df[(df[2] == 'Van') | (df[2] == 'Car') | (df[2] == 'Truck')]
+            self.gt = np.column_stack([
+                sub.iloc[:, :2].values,
+                sub.iloc[:, 6:10].values,
+            ])
+            # Define all detection score 1.
+            self.gt[:, 1] = 1.
+
+    def __len__(self):
+        return np.size(self.gt, 0)
+
+    def __getitem__(self, idx: int) \
+            -> Tuple[str, np.ndarray, np.ndarray]:
+        image = self.images[idx]
+        index = int(image.stem)
+
+        gt = np.zeros((1, 6))
+
+        if self.gt is not None:
+            gt = self.gt[self.gt[:, 0] == index]
+
+        return str(image), gt[:, 2:6], gt[:, 1]
 
 
 class Dataset(data.Dataset):

@@ -2,6 +2,8 @@ import argparse
 from pathlib import Path
 
 from tqdm import tqdm
+import numpy as np
+import pandas as pd
 
 from lib.tracker import Tracker
 from utils import init, data
@@ -17,15 +19,42 @@ def main(args: argparse.Namespace):
 
             task.set_description(sequence.stem)
 
-            tracker = Tracker()
+            tracker = Tracker(min_score=.0)
             loader = data.Dataset(str(sequence), data.MOT)
 
+            # Mask R-CNN Detection Support
+            if args.support is not None:
+                support = Path(args.support).joinpath('{}.txt'.format(sequence.stem))
+                support = pd.read_csv(str(support), header=None).values
+            else:
+                support = None
+
             with open(str(dest.joinpath('{}.txt'.format(sequence.stem))), 'w') as file:
-                for frame, targets in enumerate(map(lambda f: tracker.update(f[0], f[3], f[4]), tqdm(loader))):
+                for frame, (image, boxes, scores, *_) in enumerate(tqdm(loader)):
+
+                    # Mask R-CNN Detection Support
+                    if support is not None:
+                        selected = support[support[:, 0] == loader.index - 1]
+                        support_boxes = selected[:, 2:6]
+                        support_scores = selected[:, 6]
+
+                        if args.support_only:
+                            boxes = support_boxes
+                            scores = support_scores
+                        else:
+                            boxes = np.concatenate([
+                                boxes,
+                                support_boxes,
+                            ])
+                            scores = np.concatenate([
+                                scores,
+                                support_scores,
+                            ])
+
                     file.writelines(
                         map(lambda t: ', '.join(map(
                             str, [frame, t.id, *t.to_tlwh, 1, -1, -1, -1, -1]
-                        )) + '\n', targets)
+                        )) + '\n', tracker.update(image, boxes, scores))
                     )
 
             task.update()
@@ -41,6 +70,11 @@ if __name__ == '__main__':
                         help="Use previous results for evaluation")
     parser.add_argument("--seed", type=int, default=42,
                         help="Manual seed")
+
+    parser.add_argument("--support", type=str, default=None,
+                        help="Support detection")
+    parser.add_argument("--support-only", action='store_true', default=False,
+                        help="Support detection only")
 
     arguments = parser.parse_args()
 
