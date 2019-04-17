@@ -19,7 +19,7 @@ def main(args: argparse.Namespace):
 
             task.set_description(sequence.stem)
 
-            tracker = Tracker(min_score=.0)
+            tracker = Tracker()
             loader = data.Dataset(str(sequence), data.MOT)
 
             # Mask R-CNN Detection Support
