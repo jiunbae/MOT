@@ -15,12 +15,13 @@ def main(args: argparse.Namespace):
     dest.mkdir(parents=True, exist_ok=True)
 
     with tqdm(total=len(list(dataset.iterdir()))) as task:
-        for sequence in dataset.iterdir():
+        for sequence in sorted(dataset.iterdir()):
 
             task.set_description(sequence.stem)
 
             tracker = Tracker()
-            loader = data.Dataset(str(sequence), data.MOT)
+
+            loader = data.Dataset(str(sequence), data.get(args.type))
 
             # Mask R-CNN Detection Support
             if args.support is not None:
@@ -66,15 +67,17 @@ if __name__ == '__main__':
                         help="train data path")
     parser.add_argument("--dest", type=str, default='./results',
                         help="result destination")
-    parser.add_argument("--cache", action='store_true', default=False,
-                        help="Use previous results for evaluation")
-    parser.add_argument("--seed", type=int, default=42,
-                        help="Manual seed")
-
     parser.add_argument("--support", type=str, default=None,
                         help="Support detection")
     parser.add_argument("--support-only", action='store_true', default=False,
                         help="Support detection only")
+    parser.add_argument("--type", type=str, default='MOT',
+                        help="Dataset type, default=MOT")
+
+    parser.add_argument("--cache", action='store_true', default=False,
+                        help="Use previous results for evaluation")
+    parser.add_argument("--seed", type=int, default=42,
+                        help="Manual seed")
 
     arguments = parser.parse_args()
 

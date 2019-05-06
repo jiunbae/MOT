@@ -11,6 +11,7 @@ try:
             pjoin(root_dir, 'cuda/psroi_pooling_kernel.cu')
         ], verbose=True,
     )
+
 except ImportError:
     raise ImportError('Can not compile Position Sensitive RoI Pooling library.')
 

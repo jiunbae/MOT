@@ -9,7 +9,8 @@ import skimage
 
 
 class BaseLoader:
-    def __init__(self, root_dir: str):
+    def __init__(self, root_dir: str,
+                 *args, **kwargs):
         """
         Arguments:
             root_dir    (string): Root directory of dataset
@@ -28,12 +29,18 @@ class BaseLoader:
         """
         :return: Tuple include follows:
             - Image file path       (string)
-            - Ground truths boxes   (np.ndarray)
-            - Ground truths ids     (np.ndarray)
             - Detection boxes       (np.ndarray)
             - Detection scores      (np.ndarray)
+            - Ground truths boxes   (np.ndarray) (Optional)
+            - Ground truths ids     (np.ndarray) (Optional)
         """
         pass
+
+    @classmethod
+    def get(cls, loader: str):
+        return {
+            klass.__name__.lower(): klass for klass in cls.__subclasses__()
+        }[loader.lower()]
 
 
 class MOT(BaseLoader):
@@ -82,6 +89,56 @@ class MOT(BaseLoader):
         return str(image), det[:, 2:6], det[:, 6], gt[:, 2:6], gt[:, 1],
 
 
+class DETECTION(BaseLoader):
+    """Detection Dataset
+
+    Default format for detection results
+
+    Each sequence contains detection result by each image.
+    Each detection result contains:
+        - image_id (auto generate)
+        - class_id
+        - score
+        - *box (x, y, w, h)
+        - (Optional)
+
+    This loader prepend image id and merge all detections,
+    for handler all gt in sequence.
+    """
+    GT = '../../detections/{}'
+
+    def __init__(self, root_dir: str):
+        super().__init__(root_dir)
+        self.root = Path(root_dir)
+        self.sequence = self.root.stem
+
+        self.images = list(sorted(self.root.glob('*.png')))
+
+        self.gt = np.empty((0, 7))
+
+        for idx, gt_file in enumerate(sorted(
+                self.root.joinpath(self.GT.format(self.sequence)).glob('*.txt')
+        ), 1):
+            values = pd.read_csv(str(gt_file), header=None, sep=',').values
+            indices = np.empty(np.size(values, 0)); indices.fill(idx)
+            self.gt = np.concatenate((self.gt, np.column_stack((indices, values))))
+
+    def __len__(self):
+        return np.size(self.gt, 0)
+
+    def __getitem__(self, idx: int) \
+            -> Tuple[str, np.ndarray, np.ndarray]:
+        image = self.images[idx]
+        index = int(image.stem)
+
+        gt = np.zeros((1, 6))
+
+        if self.gt is not None:
+            gt = self.gt[self.gt[:, 0] == index]
+
+        return str(image), gt[:, 3:7], gt[:, 2]
+
+
 class KITTI(BaseLoader):
     GT = '../../label_02/{}.txt'
 
@@ -123,7 +180,9 @@ class KITTI(BaseLoader):
 
 
 class Dataset(data.Dataset):
-    def __init__(self, root_dir: str, loader: Type[BaseLoader]):
+    def __init__(self, root_dir: str,
+                 loader: Type[BaseLoader],
+                 *args, **kwargs):
         """
         Arguments:
             root_dir    (string): Root directory of dataset
@@ -133,7 +192,7 @@ class Dataset(data.Dataset):
             "Loader must be inherited from BaseLoader"
 
         self.root = Path(root_dir)
-        self.loader = loader(root_dir)
+        self.loader = loader(root_dir, *args, **kwargs)
         self.index = 0
 
     def __len__(self):
@@ -155,3 +214,6 @@ class Dataset(data.Dataset):
         image, *data = self.loader[idx]
 
         return (skimage.io.imread(image)[:, :, ::-1], *data)
+
+
+get = BaseLoader.get

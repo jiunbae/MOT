@@ -21,7 +21,7 @@ class Identifier(nn.Module):
 
         self.shape = (80, 160)
 
-        # Network
+        # Base Linear Layer
         for i in range(self.parts):
             setattr(self, 'linear{}'.format(i + 1), nn.Linear(512, 64))
 
