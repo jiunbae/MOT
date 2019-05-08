@@ -4,7 +4,13 @@ import numpy as np
 import torch
 
 
-def nms(detections: np.ndarray, scores: np.ndarray, threshold: float = .5) \
+# TODO: Remove this parts
+def nms(*args, **kwargs):
+    return torch_nms(*args, **kwargs)
+
+
+def cpu_nms(detections: np.ndarray, scores: np.ndarray,
+            threshold: float = .5) \
         -> Iterator[int]:
     """Apply non-maximum suppression
 
@@ -38,26 +44,36 @@ def nms(detections: np.ndarray, scores: np.ndarray, threshold: float = .5) \
         order = order[np.where(overlap <= threshold)[0] + 1]
 
 
-def torch_nms(boxes: np.ndarray, scores: np.ndarray,
-        overlap: float = .5, top: int = 0) \
+def torch_nms(detections: np.ndarray, scores: np.ndarray,
+              threshold: float = .5, top: int = 0) \
         -> np.ndarray:
-    boxes = torch.from_numpy(boxes)
+    """Apply non-maximum suppression based on Torch
+
+    Arguments:
+        detections: (tensor, (num, 4)) The location predictions for the image.
+        scores: (tensor, (num)) The class prediction scores for the image.
+        threshold: (float) The overlap thresh for suppressing unnecessary boxes.
+        top: (int) slice top k
+    Return:
+        The indices of the kept boxes with respect to num.
+    """
+    detections = torch.from_numpy(detections)
     scores = torch.from_numpy(scores)
 
     keep = scores.new(scores.size(0)).zero_().long()
 
-    if boxes.numel() == 0:
+    if detections.numel() == 0:
         return keep
 
-    x1, y1 = boxes[:, 0], boxes[:, 1]
-    x2, y2 = boxes[:, 2], boxes[:, 3]
+    x1, y1 = detections[:, 0], detections[:, 1]
+    x2, y2 = detections[:, 2], detections[:, 3]
 
     area = torch.mul(x2 - x1, y2 - y1)
     v, idx = scores.sort(0)
     if top:
         idx = idx[-top:]
-    xx1, yy1, xx2, yy2 = [boxes.new() for _ in range(4)]
-    w, h = boxes.new(), boxes.new()
+    xx1, yy1, xx2, yy2 = [detections.new() for _ in range(4)]
+    w, h = detections.new(), detections.new()
 
     count = 0
     while idx.numel() > 0:
@@ -90,6 +106,6 @@ def torch_nms(boxes: np.ndarray, scores: np.ndarray,
         rem_areas = torch.index_select(area, 0, idx)
         union = (rem_areas - inter) + area[i]
         IoU = inter/union
-        idx = idx[IoU.le(overlap)]
+        idx = idx[IoU.le(threshold)]
 
     return keep
