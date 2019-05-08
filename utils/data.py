@@ -112,7 +112,7 @@ class DETECTION(BaseLoader):
         self.root = Path(root_dir)
         self.sequence = self.root.stem
 
-        self.images = list(sorted(self.root.glob('*.png')))
+        self.images = list(sorted(self.root.glob('*.jpg')))
 
         self.gt = np.empty((0, 7))
 
@@ -129,12 +129,11 @@ class DETECTION(BaseLoader):
     def __getitem__(self, idx: int) \
             -> Tuple[str, np.ndarray, np.ndarray]:
         image = self.images[idx]
-        index = int(image.stem)
 
         gt = np.zeros((1, 6))
 
         if self.gt is not None:
-            gt = self.gt[self.gt[:, 0] == index]
+            gt = self.gt[self.gt[:, 0] == idx]
 
         return str(image), gt[:, 3:7], gt[:, 2]
 
