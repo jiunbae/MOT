@@ -117,14 +117,17 @@ class DETECTION(BaseLoader):
         self.gt = np.empty((0, 7))
 
         for idx, gt_file in enumerate(sorted(
-                self.root.joinpath(self.GT.format(self.sequence)).glob('*.txt')
+            self.root.joinpath(self.GT.format(self.sequence)).glob('*.txt')
         ), 1):
-            values = pd.read_csv(str(gt_file), header=None, sep=',').values
-            indices = np.empty(np.size(values, 0)); indices.fill(idx)
-            self.gt = np.concatenate((self.gt, np.column_stack((indices, values))))
+            try:
+                values = pd.read_csv(str(gt_file), header=None, sep=',').values
+                indices = np.empty(np.size(values, 0)); indices.fill(idx)
+                self.gt = np.concatenate((self.gt, np.column_stack((indices, values))))
+            except pd.errors.EmptyDataError:
+                continue
 
     def __len__(self):
-        return np.size(self.gt, 0)
+        return np.size(self.images, 0)
 
     def __getitem__(self, idx: int) \
             -> Tuple[str, np.ndarray, np.ndarray]:
