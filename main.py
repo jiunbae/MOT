@@ -27,28 +27,30 @@ def main(args: argparse.Namespace):
                 for frame, (image, boxes, scores, image_name) in enumerate(tqdm(loader)):
 
                     # Mask R-CNN Detection Support
-
-                    # Mask R-CNN Detection Support
                     if args.support is not None:
-                        support = Path(args.support).joinpath('{}.txt'.format(image_name))
-                        support = pd.read_csv(str(support), header=None).values
+                        try:
+                            support = Path(args.support).joinpath('{}.txt'.format(image_name))
+                            support = pd.read_csv(str(support), header=None).values
 
-                        support_boxes = support[:, 2:6]
-                        support_boxes[:, 2:] -= support_boxes[:, :2]
-                        support_scores = support[:, 1]
+                            support_boxes = support[:, 2:6]
+                            support_boxes[:, 2:] -= support_boxes[:, :2]
+                            support_scores = support[:, 1]
 
-                        if args.support_only:
-                            boxes = support_boxes
-                            scores = support_scores
-                        else:
-                            boxes = np.concatenate([
-                                boxes,
-                                support_boxes,
-                            ])
-                            scores = np.concatenate([
-                                scores,
-                                support_scores,
-                            ])
+                            if args.support_only:
+                                boxes = support_boxes
+                                scores = support_scores
+                            else:
+                                boxes = np.concatenate([
+                                    boxes,
+                                    support_boxes,
+                                ])
+                                scores = np.concatenate([
+                                    scores,
+                                    support_scores,
+                                ])
+                        except pd.errors.EmptyDataError:
+                            boxes = np.zeros((0, 4))
+                            scores = np.zeros(0)
 
                     file.writelines(
                         map(lambda t: ', '.join(map(
