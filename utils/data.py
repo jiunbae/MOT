@@ -184,6 +184,7 @@ class KITTI(BaseLoader):
 class Dataset(data.Dataset):
     def __init__(self, root_dir: str,
                  loader: Type[BaseLoader],
+                 jump: int,
                  *args, **kwargs):
         """
         Arguments:
@@ -196,6 +197,7 @@ class Dataset(data.Dataset):
         self.root = Path(root_dir)
         self.loader = loader(root_dir, *args, **kwargs)
         self.index = 0
+        self.jump = 0
 
     def __len__(self):
         return len(self.loader)
@@ -205,9 +207,14 @@ class Dataset(data.Dataset):
 
     def __next__(self):
         try:
-            result = self[self.index]
-            self.index += 1
-            return result
+            while True:
+                result = self[self.index]
+                self.index += 1
+
+                if self.index % self.jump:
+                    continue
+
+                return result
         except IndexError:
             self.index = 0
             raise StopIteration
@@ -215,7 +222,7 @@ class Dataset(data.Dataset):
     def __getitem__(self, idx):
         image, *data = self.loader[idx]
 
-        return (skimage.io.imread(image)[:, :, ::-1], *data)
+        return (skimage.io.imread(image)[:, :, ::-1], *data, Path(image).stem)
 
 
 get = BaseLoader.get
