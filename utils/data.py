@@ -197,7 +197,7 @@ class Dataset(data.Dataset):
         self.root = Path(root_dir)
         self.loader = loader(root_dir, *args, **kwargs)
         self.index = 0
-        self.jump = 0
+        self.jump = jump
 
     def __len__(self):
         return len(self.loader)
@@ -211,7 +211,7 @@ class Dataset(data.Dataset):
                 result = self[self.index]
                 self.index += 1
 
-                if self.index % self.jump:
+                if (self.index - 1) % self.jump:
                     continue
 
                 return result
